@@ -11,6 +11,10 @@ class EmailSentPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Image.asset(
+                'images/logo.png', // Path to your logo image
+                width: 500,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

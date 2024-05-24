@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class LogoutPage extends StatelessWidget {
+class FrontPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,6 +9,10 @@ class LogoutPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Image.asset(
+              'images/logo.png', // Path to your logo image
+              width: 500,
+            ),
             Text(
               'Welcome!',
               style: TextStyle(

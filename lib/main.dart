@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
-import 'logout_page.dart';
+import 'front_page.dart';
 import 'forgot_password_page.dart';
 import 'email_sent_page.dart';
 
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => LoginPage(),
-        '/logout': (context) => LogoutPage(),
+        '/front': (context) => FrontPage(),
         '/forgot_password': (context) => ForgotPasswordPage(),
         '/email_sent': (context) => EmailSentPage(),
       },

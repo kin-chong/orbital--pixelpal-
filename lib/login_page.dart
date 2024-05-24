@@ -13,9 +13,8 @@ class LoginPage extends StatelessWidget {
             children: <Widget>[
               // Add the logo here
               Image.asset(
-                'assets/logo.png', // Path to your logo image
-                height: 100, // Set the height of the logo
-                width: 100, // Set the width of the logo
+                'images/logo.png', // Path to your logo image
+                width: 500,
               ),
               SizedBox(height: 20),
               Text(
@@ -28,7 +27,7 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 50),
               SizedBox(
-                width: 300, // Set the static width here
+                width: 1000, // Set the static width here
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -76,7 +75,7 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: 50),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/logout');
+                  Navigator.pushReplacementNamed(context, '/front');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.yellow,
