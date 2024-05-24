@@ -11,6 +11,13 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              // Add the logo here
+              Image.asset(
+                'assets/logo.png', // Path to your logo image
+                height: 100, // Set the height of the logo
+                width: 100, // Set the width of the logo
+              ),
+              SizedBox(height: 20),
               Text(
                 'Login',
                 style: TextStyle(
@@ -21,7 +28,7 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 50),
               SizedBox(
-                width: 1000, // Set the static width here
+                width: 300, // Set the static width here
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
