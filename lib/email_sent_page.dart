@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ForgotPasswordPage extends StatelessWidget {
+class EmailSentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,15 +14,9 @@ class ForgotPasswordPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.yellow),
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                  ),
                   SizedBox(width: 10),
                   Text(
-                    'Forgot Password',
+                    'Email Sent',
                     style: TextStyle(
                       color: Colors.yellow,
                       fontSize: 32,
@@ -32,32 +26,24 @@ class ForgotPasswordPage extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 50),
-              SizedBox(
-                width: 1000, // Set the static width here
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Enter your email',
-                    hintStyle: TextStyle(color: Colors.yellow),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.yellow),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.yellow),
-                    ),
-                  ),
-                  style: TextStyle(color: Colors.yellow),
+              Text(
+                'Please check your email for further instructions.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
                 ),
+                textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/email_sent');
+                  Navigator.pushReplacementNamed(context, '/login');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.yellow,
                   foregroundColor: Colors.black,
                 ),
-                child: Text('Reset Password'),
+                child: Text('Back to Login'),
               ),
             ],
           ),
