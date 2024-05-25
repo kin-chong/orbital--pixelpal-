@@ -16,8 +16,9 @@ Future main() async {
             appId: "1:374638859313:web:50144fd78cdd4fc5013110",
             messagingSenderId: "374638859313",
             projectId: "orbital-pixelpal"));
+  } else {
+    await Firebase.initializeApp();
   }
-  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
