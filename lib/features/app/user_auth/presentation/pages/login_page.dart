@@ -74,16 +74,6 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               ),
-              /* ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/front');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.yellow,
-                  foregroundColor: Colors.black,
-                ),
-                child: Text('Login'),
-              ), */
               SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

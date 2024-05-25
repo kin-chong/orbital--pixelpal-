@@ -59,16 +59,6 @@ class EmailSentPage extends StatelessWidget {
                   ),
                 ),
               ),
-              /* ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/login');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.yellow,
-                  foregroundColor: Colors.black,
-                ),
-                child: Text('Back to Login'),
-              ), */
             ],
           ),
         ),

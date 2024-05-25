@@ -72,16 +72,6 @@ class SignUpPage extends StatelessWidget {
                   ),
                 ),
               ),
-              /* ElevatedButton(
-                onPressed: () {
-                  // Add your sign-up logic here
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.yellow,
-                  foregroundColor: Colors.black,
-                ),
-                child: Text('Sign Up'),
-              ), */
               SizedBox(height: 10),
               TextButton(
                 onPressed: () {

@@ -21,16 +21,26 @@ class FrontPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 50),
-            ElevatedButton(
-              onPressed: () {
+            SizedBox(height: 20),
+            GestureDetector(
+              onTap: () {
                 Navigator.pushReplacementNamed(context, '/login');
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.yellow,
-                foregroundColor: Colors.black,
+              child: Container(
+                width: 100,
+                height: 45,
+                decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Center(
+                  child: Text(
+                    "Logout",
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
-              child: Text('Logout'),
             ),
           ],
         ),
