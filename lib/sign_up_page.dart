@@ -15,7 +15,7 @@ class SignUpPage extends StatelessWidget {
                 'images/logo.png',
                 width: 500,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Text(
                 'Sign Up',
                 style: TextStyle(

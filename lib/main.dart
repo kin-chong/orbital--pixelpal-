@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'front_page.dart';
@@ -5,7 +7,17 @@ import 'forgot_password_page.dart';
 import 'email_sent_page.dart';
 import 'sign_up_page.dart';
 
-void main() {
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: FirebaseOptions(
+            apiKey: "AIzaSyAOjo0ICshmA127L-EHlW2fItGzk4kQ8ww",
+            appId: "1:374638859313:web:50144fd78cdd4fc5013110",
+            messagingSenderId: "374638859313",
+            projectId: "orbital-pixelpal"));
+  }
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
