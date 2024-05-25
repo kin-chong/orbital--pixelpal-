@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
+class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +17,7 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Text(
-                'Login',
+                'Sign Up',
                 style: TextStyle(
                   color: Colors.yellow,
                   fontSize: 32,
@@ -26,13 +26,27 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 25),
               SizedBox(
-                width: 750, // Set the static width here
+                width: 750,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
                       decoration: InputDecoration(
                         hintText: 'Username',
+                        hintStyle: TextStyle(color: Colors.yellow),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.yellow),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.yellow),
+                        ),
+                      ),
+                      style: TextStyle(color: Colors.yellow),
+                    ),
+                    SizedBox(height: 20),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Email',
                         hintStyle: TextStyle(color: Colors.yellow),
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.yellow),
@@ -58,53 +72,45 @@ class LoginPage extends StatelessWidget {
                       ),
                       style: TextStyle(color: Colors.yellow),
                     ),
-                    SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/forgot_password');
-                      },
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: Colors.yellow),
+                    SizedBox(height: 20),
+                    TextField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Confirm Password',
+                        hintStyle: TextStyle(color: Colors.yellow),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.yellow),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.yellow),
+                        ),
                       ),
+                      style: TextStyle(color: Colors.yellow),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 50),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/front');
+                  // Add your sign-up logic here
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.yellow,
                   foregroundColor: Colors.black,
                 ),
-                child: Text('Login'),
+                child: Text('Sign Up'),
               ),
-              SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'No account?',
-                    style: TextStyle(
-                      color: Colors.yellow,
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/signup');
-                    },
-                    child: Text(
-                      'Sign Up',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              )
+              SizedBox(height: 10),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                child: Text(
+                  'Back to Login',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ],
           ),
         ),

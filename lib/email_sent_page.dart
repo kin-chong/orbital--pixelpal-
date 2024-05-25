@@ -20,7 +20,7 @@ class EmailSentPage extends StatelessWidget {
                 children: [
                   SizedBox(width: 10),
                   Text(
-                    'Email Sent',
+                    'Email Sent!',
                     style: TextStyle(
                       color: Colors.yellow,
                       fontSize: 32,
@@ -29,7 +29,7 @@ class EmailSentPage extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 10),
               Text(
                 'Please check your email for further instructions.',
                 style: TextStyle(

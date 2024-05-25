@@ -15,16 +15,10 @@ class ForgotPasswordPage extends StatelessWidget {
                 'images/logo.png', // Path to your logo image
                 width: 500,
               ),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.yellow),
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                  ),
-                  SizedBox(width: 10),
                   Text(
                     'Forgot Password',
                     style: TextStyle(
@@ -35,9 +29,9 @@ class ForgotPasswordPage extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 25),
               SizedBox(
-                width: 1000, // Set the static width here
+                width: 750, // Set the static width here
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Enter your email',
@@ -62,6 +56,16 @@ class ForgotPasswordPage extends StatelessWidget {
                   foregroundColor: Colors.black,
                 ),
                 child: Text('Reset Password'),
+              ),
+              SizedBox(height: 10),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                child: Text(
+                  'Back to Login',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
