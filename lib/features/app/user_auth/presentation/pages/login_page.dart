@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -30,33 +31,14 @@ class LoginPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Username',
-                        hintStyle: TextStyle(color: Colors.yellow),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.yellow),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.yellow),
-                        ),
-                      ),
-                      style: TextStyle(color: Colors.yellow),
+                    FormContainerWidget(
+                      hintText: "Username",
+                      isPasswordField: false,
                     ),
                     SizedBox(height: 20),
-                    TextField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: 'Password',
-                        hintStyle: TextStyle(color: Colors.yellow),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.yellow),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.yellow),
-                        ),
-                      ),
-                      style: TextStyle(color: Colors.yellow),
+                    FormContainerWidget(
+                      hintText: "Password",
+                      isPasswordField: true,
                     ),
                     SizedBox(height: 10),
                     TextButton(
@@ -72,7 +54,27 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/front');
+                },
+                child: Container(
+                  width: 100,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.yellow,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Login",
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+              /* ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/front');
                 },
@@ -81,7 +83,7 @@ class LoginPage extends StatelessWidget {
                   foregroundColor: Colors.black,
                 ),
                 child: Text('Login'),
-              ),
+              ), */
               SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

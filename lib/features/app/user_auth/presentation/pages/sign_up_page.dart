@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
 
-class ForgotPasswordPage extends StatelessWidget {
+class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,38 +13,51 @@ class ForgotPasswordPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                'images/logo.png', // Path to your logo image
+                'images/logo.png',
                 width: 500,
               ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Forgot Password',
-                    style: TextStyle(
-                      color: Colors.yellow,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+              SizedBox(height: 10),
+              Text(
+                'Sign Up',
+                style: TextStyle(
+                  color: Colors.yellow,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: 25),
               SizedBox(
-                width: 750, // Set the static width here
-                child: FormContainerWidget(
-                  hintText: "Enter your email",
-                  isPasswordField: false,
+                width: 750,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FormContainerWidget(
+                      hintText: "Username",
+                      isPasswordField: false,
+                    ),
+                    SizedBox(height: 20),
+                    FormContainerWidget(
+                      hintText: "Email",
+                      isPasswordField: false,
+                    ),
+                    SizedBox(height: 20),
+                    FormContainerWidget(
+                      hintText: "Password",
+                      isPasswordField: true,
+                    ),
+                    SizedBox(height: 20),
+                    FormContainerWidget(
+                      hintText: "Confirm Password",
+                      isPasswordField: true,
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 50),
               GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, '/email_sent');
-                },
+                onTap: () {},
                 child: Container(
-                  width: 200,
+                  width: 100,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.yellow,
@@ -52,25 +65,23 @@ class ForgotPasswordPage extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      "Reset Password",
+                      "Sign Up",
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
               ),
-
               /* ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/email_sent');
+                  // Add your sign-up logic here
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.yellow,
                   foregroundColor: Colors.black,
                 ),
-                child: Text('Reset Password'),
+                child: Text('Sign Up'),
               ), */
-
               SizedBox(height: 10),
               TextButton(
                 onPressed: () {

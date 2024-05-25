@@ -1,11 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'login_page.dart';
+import 'package:pixelpal/features/app/splash_screen/splash_screen.dart';
+import 'features/app/user_auth/presentation/pages/login_page.dart';
 import 'front_page.dart';
 import 'forgot_password_page.dart';
 import 'email_sent_page.dart';
-import 'sign_up_page.dart';
+import 'features/app/user_auth/presentation/pages/sign_up_page.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/login',
       routes: {
+        '/splash_screen': (context) => SplashScreen(),
         '/login': (context) => LoginPage(),
         '/front': (context) => FrontPage(),
         '/forgot_password': (context) => ForgotPasswordPage(),
