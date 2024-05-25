@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
                 'images/logo.png',
                 width: 500,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Text(
                 'Login',
                 style: TextStyle(

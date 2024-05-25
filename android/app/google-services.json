@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "374638859313",
+    "project_id": "orbital-pixelpal",
+    "storage_bucket": "orbital-pixelpal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374638859313:android:1416240ea9ba75ba013110",
+        "android_client_info": {
+          "package_name": "com.example.pixelpal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2pNtXBbsQEeaTq6N7nGne4E-g8uoH9v8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
