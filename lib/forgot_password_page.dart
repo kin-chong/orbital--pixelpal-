@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
   @override
@@ -32,22 +33,34 @@ class ForgotPasswordPage extends StatelessWidget {
               SizedBox(height: 25),
               SizedBox(
                 width: 750, // Set the static width here
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Enter your email',
-                    hintStyle: TextStyle(color: Colors.yellow),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.yellow),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.yellow),
-                    ),
-                  ),
-                  style: TextStyle(color: Colors.yellow),
+                child: FormContainerWidget(
+                  hintText: "Enter your email",
+                  isPasswordField: false,
                 ),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/email_sent');
+                },
+                child: Container(
+                  width: 200,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.yellow,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Reset Password",
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+
+              /* ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/email_sent');
                 },
@@ -56,7 +69,8 @@ class ForgotPasswordPage extends StatelessWidget {
                   foregroundColor: Colors.black,
                 ),
                 child: Text('Reset Password'),
-              ),
+              ), */
+
               SizedBox(height: 10),
               TextButton(
                 onPressed: () {

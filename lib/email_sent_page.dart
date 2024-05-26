@@ -39,15 +39,25 @@ class EmailSentPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
+              GestureDetector(
+                onTap: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.yellow,
-                  foregroundColor: Colors.black,
+                child: Container(
+                  width: 150,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.yellow,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Back to Login",
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
-                child: Text('Back to Login'),
               ),
             ],
           ),
