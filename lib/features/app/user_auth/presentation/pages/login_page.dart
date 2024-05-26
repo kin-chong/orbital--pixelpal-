@@ -135,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
       showToast(message: "Account has been successfully signed in");
       Navigator.pushNamed(context, "/front");
     } else {
-      showToast(message: "Some error happened");
+      //showToast(message: "Some error happened");
     }
   }
 }

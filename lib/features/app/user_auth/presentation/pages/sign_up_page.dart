@@ -126,7 +126,7 @@ class _SignUpPageState extends State<SignUpPage> {
       showToast(message: "Account has been successfully created");
       Navigator.pushNamed(context, "/front");
     } else {
-      showToast(message: "Some error happened");
+      //showToast(message: "Some error happened");
     }
   }
 }
