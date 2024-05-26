@@ -57,7 +57,7 @@ class _FormContainerWidgetState extends State<FormContainerWidget> {
               OutlineInputBorder(borderSide: BorderSide(color: Colors.yellow)),
           filled: false,
           hintText: widget.hintText,
-          hintStyle: TextStyle(color: Color.fromARGB(82, 184, 148, 43)),
+          hintStyle: TextStyle(color: Color.fromARGB(143, 182, 154, 71)),
           suffixIcon: new GestureDetector(
             onTap: () {
               setState(() {
