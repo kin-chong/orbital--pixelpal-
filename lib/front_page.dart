@@ -4,6 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'services/movie_service.dart';
 
 class FrontPage extends StatefulWidget {
+  const FrontPage({super.key});
+
   @override
   _FrontPageState createState() => _FrontPageState();
 }
@@ -19,11 +21,11 @@ class _FrontPageState extends State<FrontPage> {
         future: _movieService.fetchUpcomingMovies(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
                 child: Text('Error: ${snapshot.error}',
-                    style: TextStyle(color: Colors.white)));
+                    style: const TextStyle(color: Colors.white)));
           } else {
             return ListView.builder(
               itemCount: snapshot.data?.length ?? 0,
@@ -50,24 +52,24 @@ class _FrontPageState extends State<FrontPage> {
                               children: [
                                 Text(
                                   movie['title'],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.yellow,
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Text(
                                   'Release Date: ${movie['release_date']}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white70,
                                     fontSize: 16,
                                   ),
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Text(
                                   movie['overview'],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
                                   ),
@@ -93,7 +95,7 @@ class _FrontPageState extends State<FrontPage> {
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        items: <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.home),
             label: 'Home',

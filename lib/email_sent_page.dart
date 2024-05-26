@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class EmailSentPage extends StatelessWidget {
+  const EmailSentPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +17,7 @@ class EmailSentPage extends StatelessWidget {
                 'images/logo.png', // Path to your logo image
                 width: 500,
               ),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(width: 10),
@@ -29,8 +31,8 @@ class EmailSentPage extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Please check your email for further instructions.',
                 style: TextStyle(
                   color: Colors.white,
@@ -38,7 +40,7 @@ class EmailSentPage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/login');
@@ -50,7 +52,7 @@ class EmailSentPage extends StatelessWidget {
                     color: Colors.yellow,
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       "Back to Login",
                       style: TextStyle(

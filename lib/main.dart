@@ -13,7 +13,7 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     await Firebase.initializeApp(
-        options: FirebaseOptions(
+        options: const FirebaseOptions(
             apiKey: "AIzaSyAOjo0ICshmA127L-EHlW2fItGzk4kQ8ww",
             appId: "1:374638859313:web:50144fd78cdd4fc5013110",
             messagingSenderId: "374638859313",
@@ -21,10 +21,12 @@ Future main() async {
   } else {
     await Firebase.initializeApp();
   }
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,22 +36,24 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/login',
       routes: {
-        '/splash_screen': (context) => SplashScreen(),
-        '/login': (context) => LoginPage(),
-        '/front': (context) => FrontPage(),
-        '/forgot_password': (context) => ForgotPasswordPage(),
-        '/email_sent': (context) => EmailSentPage(),
-        '/signup': (context) => SignUpPage(),
-        '/upcoming_movies': (context) => UpcomingMoviesScreen(),
+        '/splash_screen': (context) => const SplashScreen(),
+        '/login': (context) => const LoginPage(),
+        '/front': (context) => const FrontPage(),
+        '/forgot_password': (context) => const ForgotPasswordPage(),
+        '/email_sent': (context) => const EmailSentPage(),
+        '/signup': (context) => const SignUpPage(),
+        '/upcoming_movies': (context) => const UpcomingMoviesScreen(),
         // Define the /forum route if it's referenced somewhere in the app
         '/forum': (context) =>
-            ForumPage(), // Assuming you have a ForumPage widget
+            const ForumPage(), // Assuming you have a ForumPage widget
       },
     );
   }
 }
 
 class UpcomingMoviesScreen extends StatefulWidget {
+  const UpcomingMoviesScreen({super.key});
+
   @override
   _UpcomingMoviesScreenState createState() => _UpcomingMoviesScreenState();
 }
@@ -62,14 +66,14 @@ class _UpcomingMoviesScreenState extends State<UpcomingMoviesScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Upcoming Movies'),
+        title: const Text('Upcoming Movies'),
         backgroundColor: Colors.black,
       ),
       body: FutureBuilder<List<dynamic>>(
         future: _movieService.fetchUpcomingMovies(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -81,9 +85,9 @@ class _UpcomingMoviesScreenState extends State<UpcomingMoviesScreen> {
                   leading: Image.network(
                       'https://image.tmdb.org/t/p/w92${movie['poster_path']}'),
                   title: Text(movie['title'],
-                      style: TextStyle(color: Colors.white)),
+                      style: const TextStyle(color: Colors.white)),
                   subtitle: Text(movie['release_date'],
-                      style: TextStyle(color: Colors.white70)),
+                      style: const TextStyle(color: Colors.white70)),
                 );
               },
             );
@@ -96,13 +100,15 @@ class _UpcomingMoviesScreenState extends State<UpcomingMoviesScreen> {
 
 // Define the ForumPage widget if you reference it in routes
 class ForumPage extends StatelessWidget {
+  const ForumPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Forum'),
+        title: const Text('Forum'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Forum Page Content'),
       ),
     );

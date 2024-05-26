@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
+  const ForgotPasswordPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,8 +18,8 @@ class ForgotPasswordPage extends StatelessWidget {
                 'images/logo.png', // Path to your logo image
                 width: 500,
               ),
-              SizedBox(height: 20),
-              Row(
+              const SizedBox(height: 20),
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
@@ -30,15 +32,15 @@ class ForgotPasswordPage extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 25),
-              SizedBox(
+              const SizedBox(height: 25),
+              const SizedBox(
                 width: 750, // Set the static width here
                 child: FormContainerWidget(
                   hintText: "Enter your email",
                   isPasswordField: false,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/email_sent');
@@ -50,7 +52,7 @@ class ForgotPasswordPage extends StatelessWidget {
                     color: Colors.yellow,
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       "Reset Password",
                       style: TextStyle(
@@ -71,12 +73,12 @@ class ForgotPasswordPage extends StatelessWidget {
                 child: Text('Reset Password'),
               ), */
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
-                child: Text(
+                child: const Text(
                   'Back to Login',
                   style: TextStyle(color: Colors.white),
                 ),

@@ -6,6 +6,8 @@ import 'package:pixelpal/global/common/toast.dart';
 import '../../firebase_auth_implementation/firebase_auth_services.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -13,8 +15,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final FirebaseAuthService _auth = FirebaseAuthService();
 
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
@@ -37,8 +39,8 @@ class _LoginPageState extends State<LoginPage> {
                 'images/logo.png',
                 width: 500,
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Login',
                 style: TextStyle(
                   color: Colors.yellow,
@@ -46,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               SizedBox(
                 width: 750, // Set the static width here
                 child: Column(
@@ -57,18 +59,18 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: "Email",
                       isPasswordField: false,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     FormContainerWidget(
                       controller: _passwordController,
                       hintText: "Password",
                       isPasswordField: true,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/forgot_password');
                       },
-                      child: Text(
+                      child: const Text(
                         'Forgot Password?',
                         style: TextStyle(color: Colors.yellow),
                       ),
@@ -76,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               GestureDetector(
                 onTap: _signIn,
                 child: Container(
@@ -86,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.yellow,
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       "Login",
                       style: TextStyle(
@@ -95,11 +97,11 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'No account?',
                     style: TextStyle(
                       color: Colors.yellow,
@@ -111,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       Navigator.pushNamed(context, '/signup');
                     },
-                    child: Text(
+                    child: const Text(
                       'Sign Up',
                       style: TextStyle(color: Colors.white),
                     ),
