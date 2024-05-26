@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
+import 'package:pixelpal/global/common/toast.dart';
 
 import '../../firebase_auth_implementation/firebase_auth_services.dart';
 
@@ -131,10 +132,10 @@ class _LoginPageState extends State<LoginPage> {
     User? user = await _auth.signInWithEmailAndPassword(email, password);
 
     if (user != null) {
-      print("Account has been successfully signed in");
+      showToast(message: "Account has been successfully signed in");
       Navigator.pushNamed(context, "/front");
     } else {
-      print("Some error happened");
+      showToast(message: "Some error happened");
     }
   }
 }

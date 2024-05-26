@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
+import 'package:pixelpal/global/common/toast.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -122,10 +123,10 @@ class _SignUpPageState extends State<SignUpPage> {
     User? user = await _auth.signUpWithEmailandPassword(email, password);
 
     if (user != null) {
-      print("Account has been successfully created");
+      showToast(message: "Account has been successfully created");
       Navigator.pushNamed(context, "/front");
     } else {
-      print("Some error happened");
+      showToast(message: "Some error happened");
     }
   }
 }
