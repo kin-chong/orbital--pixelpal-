@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FrontPage extends StatelessWidget {
@@ -24,7 +25,8 @@ class FrontPage extends StatelessWidget {
             SizedBox(height: 20),
             GestureDetector(
               onTap: () {
-                Navigator.pushReplacementNamed(context, '/login');
+                FirebaseAuth.instance.signOut();
+                Navigator.pushNamed(context, "/login");
               },
               child: Container(
                 width: 100,
