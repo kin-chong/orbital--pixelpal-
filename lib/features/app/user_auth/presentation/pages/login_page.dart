@@ -179,7 +179,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _signInWithGoogle() async {
-    final GoogleSignIn _googleSignIn = GoogleSignIn();
+    final GoogleSignIn _googleSignIn = GoogleSignIn(
+      clientId:
+          '374638859313-tij5p6jbstktbm7ugt5ae89b75koqid1.apps.googleusercontent.com',
+    );
 
     try {
       final GoogleSignInAccount? googleSignInAccount =
