@@ -9,15 +9,17 @@ import 'email_sent_page.dart';
 import 'features/app/user_auth/presentation/pages/sign_up_page.dart';
 import 'services/movie_service.dart';
 
-Future main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     await Firebase.initializeApp(
-        options: const FirebaseOptions(
-            apiKey: "AIzaSyAOjo0ICshmA127L-EHlW2fItGzk4kQ8ww",
-            appId: "1:374638859313:web:50144fd78cdd4fc5013110",
-            messagingSenderId: "374638859313",
-            projectId: "orbital-pixelpal"));
+      options: const FirebaseOptions(
+        apiKey: "AIzaSyAOjo0ICshmA127L-EHlW2fItGzk4kQ8ww",
+        appId: "1:374638859313:web:50144fd78cdd4fc5013110",
+        messagingSenderId: "374638859313",
+        projectId: "orbital-pixelpal",
+      ),
+    );
   } else {
     await Firebase.initializeApp();
   }
@@ -43,9 +45,7 @@ class MyApp extends StatelessWidget {
         '/email_sent': (context) => const EmailSentPage(),
         '/signup': (context) => const SignUpPage(),
         '/upcoming_movies': (context) => const UpcomingMoviesScreen(),
-        // Define the /forum route if it's referenced somewhere in the app
-        '/forum': (context) =>
-            const ForumPage(), // Assuming you have a ForumPage widget
+        '/forum': (context) => const ForumPage(), // Ensure this widget is defined
       },
     );
   }
@@ -83,11 +83,16 @@ class _UpcomingMoviesScreenState extends State<UpcomingMoviesScreen> {
                 var movie = snapshot.data![index];
                 return ListTile(
                   leading: Image.network(
-                      'https://image.tmdb.org/t/p/w92${movie['poster_path']}'),
-                  title: Text(movie['title'],
-                      style: const TextStyle(color: Colors.white)),
-                  subtitle: Text(movie['release_date'],
-                      style: const TextStyle(color: Colors.white70)),
+                    'https://image.tmdb.org/t/p/w92${movie['poster_path']}',
+                  ),
+                  title: Text(
+                    movie['title'],
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  subtitle: Text(
+                    movie['release_date'],
+                    style: const TextStyle(color: Colors.white70),
+                  ),
                 );
               },
             );
@@ -98,7 +103,6 @@ class _UpcomingMoviesScreenState extends State<UpcomingMoviesScreen> {
   }
 }
 
-// Define the ForumPage widget if you reference it in routes
 class ForumPage extends StatelessWidget {
   const ForumPage({super.key});
 
