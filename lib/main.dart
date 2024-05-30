@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/splash_screen/splash_screen.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
 import 'features/app/user_auth/presentation/pages/login_page.dart';
 import 'front_page.dart';
 import 'forgot_password_page.dart';
@@ -45,7 +46,9 @@ class MyApp extends StatelessWidget {
         '/email_sent': (context) => const EmailSentPage(),
         '/signup': (context) => const SignUpPage(),
         '/upcoming_movies': (context) => const UpcomingMoviesScreen(),
-        '/forum': (context) => const ForumPage(), // Ensure this widget is defined
+        '/forum': (context) =>
+            const ForumPage(), // Ensure this widget is defined
+        '/profile': (context) => const ProfileMenu(), //temp log out page
       },
     );
   }
