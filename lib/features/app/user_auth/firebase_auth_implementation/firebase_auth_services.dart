@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../global/common/toast.dart';
 
 class FirebaseAuthService {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   Future<User?> signUpWithEmailandPassword(
       String email, String password) async {
     try {

@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
 import 'package:pixelpal/global/common/toast.dart';
 
 class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
   @override
   State<SignUpPage> createState() => _SignUpPageState();
 }
@@ -13,9 +14,9 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final FirebaseAuthService _auth = FirebaseAuthService();
 
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
@@ -39,8 +40,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 'images/logo.png',
                 width: 500,
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Sign Up',
                 style: TextStyle(
                   color: Colors.yellow,
@@ -48,7 +49,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               SizedBox(
                 width: 750,
                 child: Column(
@@ -59,13 +60,13 @@ class _SignUpPageState extends State<SignUpPage> {
                       hintText: "Username",
                       isPasswordField: false,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     FormContainerWidget(
                       controller: _emailController,
                       hintText: "Email",
                       isPasswordField: false,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     FormContainerWidget(
                       controller: _passwordController,
                       hintText: "Password",
@@ -79,7 +80,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               GestureDetector(
                 onTap: _signUp,
                 child: Container(
@@ -89,7 +90,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     color: Colors.yellow,
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       "Sign Up",
                       style: TextStyle(
@@ -98,12 +99,12 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
-                child: Text(
+                child: const Text(
                   'Back to Login',
                   style: TextStyle(color: Colors.white),
                 ),

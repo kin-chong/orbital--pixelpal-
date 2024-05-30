@@ -12,7 +12,7 @@ class FormContainerWidget extends StatefulWidget {
   final ValueChanged<String>? onFieldSubmitted;
   final TextInputType? inputType;
 
-  const FormContainerWidget({
+  const FormContainerWidget({super.key, 
     this.controller,
     this.isPasswordField,
     this.fieldKey,
@@ -26,7 +26,7 @@ class FormContainerWidget extends StatefulWidget {
   });
 
   @override
-  _FormContainerWidgetState createState() => new _FormContainerWidgetState();
+  _FormContainerWidgetState createState() => _FormContainerWidgetState();
 }
 
 class _FormContainerWidgetState extends State<FormContainerWidget> {
@@ -41,8 +41,8 @@ class _FormContainerWidgetState extends State<FormContainerWidget> {
         color: Colors.black.withOpacity(.35),
         borderRadius: BorderRadius.circular(5),
       ),
-      child: new TextFormField(
-        style: TextStyle(color: Colors.yellow),
+      child: TextFormField(
+        style: const TextStyle(color: Colors.yellow),
         controller: widget.controller,
         keyboardType: widget.inputType,
         key: widget.fieldKey,
@@ -50,15 +50,15 @@ class _FormContainerWidgetState extends State<FormContainerWidget> {
         onSaved: widget.onSaved,
         validator: widget.validator,
         onFieldSubmitted: widget.onFieldSubmitted,
-        decoration: new InputDecoration(
+        decoration: InputDecoration(
           enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.yellow)),
+              const OutlineInputBorder(borderSide: BorderSide(color: Colors.yellow)),
           focusedBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.yellow)),
+              const OutlineInputBorder(borderSide: BorderSide(color: Colors.yellow)),
           filled: false,
           hintText: widget.hintText,
-          hintStyle: TextStyle(color: Color.fromARGB(143, 182, 154, 71)),
-          suffixIcon: new GestureDetector(
+          hintStyle: const TextStyle(color: Color.fromARGB(143, 182, 154, 71)),
+          suffixIcon: GestureDetector(
             onTap: () {
               setState(() {
                 _obscureText = !_obscureText;
@@ -69,7 +69,7 @@ class _FormContainerWidgetState extends State<FormContainerWidget> {
                     _obscureText ? Icons.visibility_off : Icons.visibility,
                     color: _obscureText == false ? Colors.yellow : Colors.grey,
                   )
-                : Text(""),
+                : const Text(""),
           ),
         ),
       ),
