@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
 import 'package:pixelpal/global/common/toast.dart';
 
@@ -14,6 +16,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final FirebaseAuthService _auth = FirebaseAuthService();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -78,23 +81,59 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              GestureDetector(
-                onTap: _signIn,
-                child: Container(
-                  width: 100,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.yellow,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+              SizedBox(height: 20),
+              SizedBox(
+                width: 300,
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: _signIn,
+                      child: Container(
+                        height: 45,
+                        decoration: BoxDecoration(
+                          color: Colors.yellow,
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: () {
+                        _signInWithGoogle();
+                      },
+                      child: Container(
+                        height: 45,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(FontAwesomeIcons.google,
+                                  color: Colors.white),
+                              SizedBox(width: 10),
+                              Text(
+                                "Sign in with Google",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 15),
@@ -137,7 +176,31 @@ class _LoginPageState extends State<LoginPage> {
       showToast(message: "Account has been successfully signed in");
       Navigator.pushNamed(context, "/front");
     } else {
-      showToast(message: "Some error happened");
+      //showToast(message: "Some error happened");
+    }
+  }
+
+  _signInWithGoogle() async {
+    final GoogleSignIn _googleSignIn = GoogleSignIn(
+      clientId:
+          '374638859313-tij5p6jbstktbm7ugt5ae89b75koqid1.apps.googleusercontent.com',
+    );
+
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await _googleSignIn.signIn();
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+            idToken: googleSignInAuthentication.idToken,
+            accessToken: googleSignInAuthentication.accessToken);
+
+        await _firebaseAuth.signInWithCredential(credential);
+        Navigator.pushNamed(context, "/front");
+      }
+    } catch (e) {
+      showToast(message: "Some error occurred $e");
     }
   }
 }
