@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'services/movie_service.dart';
@@ -47,11 +46,11 @@ class _FrontPageState extends State<FrontPage>
             preferredSize: const Size.fromHeight(48.0),
             child: Container(
               color: Colors.black,
-              child: TabBar(
+              child: const TabBar(
                 indicatorColor: Colors.pinkAccent,
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.white54,
-                tabs: const [
+                tabs: [
                   Tab(text: 'Upcoming'),
                   Tab(text: 'Popular'),
                   Tab(text: 'Favorites'),
@@ -64,7 +63,7 @@ class _FrontPageState extends State<FrontPage>
           children: [
             _buildUpcomingMoviesList(),
             _buildPopularMoviesList(),
-            Center(
+            const Center(
                 child: Text('Favorite Movies',
                     style: TextStyle(color: Colors.white))),
           ],
