@@ -1,5 +1,5 @@
 # PixelPal 
-![pixelpal](assets/images/logo.png =100x)
+![pixelpal](assets/images/logo.png)
 
 ## Introduction
 Welcome to PixelPal! This app is designed for movie lovers who want a smooth experience in finding their favorite movies while meeting new friends. PixelPal also digitizes physical movie tickets, allowing users to keep track of the movies they've watched and receive personalized recommendations for future viewing.
