@@ -65,4 +65,4 @@ We welcome contributions from the community. If you'd like to contribute, please
 PixelPal is released under the [MIT License](LICENSE.md). See the LICENSE file for more details.
 
 ## Contact Information
-For support or queries, please contact us at [Casey](e1122625@u.nus.edu)&[Aiden](e1122634@u.nus.edu).
+For support or queries, please contact us at e1122625@u.nus.edu &e1122634@u.nus.edu
