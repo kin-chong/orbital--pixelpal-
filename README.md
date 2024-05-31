@@ -13,14 +13,12 @@ Welcome to PixelPal! This app is designed for movie lovers who want a smooth exp
 As PixelPal is currently in development, you'll need to set up your environment to run the app. Here’s how you can get it up and running on your machine:
 
 ### Prerequisites
-- Install [Node.js](https://nodejs.org/en/) (include version requirements if any)
 - Install [Flutter](https://flutter.dev/docs/get-started/install) (specify the version if necessary)
-- Any other SDKs or tools required
 
 ### Steps
 1. Clone the repository:
 
-    git clone [repository-url]
+    git clone [https://github.com/kin-chong/orbital--pixelpal-]
 
 2. Navigate to the project directory:
 
@@ -35,9 +33,30 @@ As PixelPal is currently in development, you'll need to set up your environment 
     flutter run or flutter run -v(for debugging)
 
 ## Usage
-After installation, you can start using the app by following these steps:
-- **Step 1**: (Provide a brief description of how to start using the app)
-- **Step 2**: (Instructions on how to scan tickets or explore features)
+To get started with PixelPal, follow these simple steps:
+
+### Signing Up and Logging In
+1. **Sign Up/Login**: Open the app and sign up if you're a new user or log in with your credentials. You can also use Google Sign-In for a quicker process.
+
+### Discovering Movies
+2. **Explore Movies**: Use the search feature to find movies. You can browse through genres, new releases, or use the search bar to find your favorite movies.
+
+### Connecting with Friends
+3. **Meet New Friends**: Check out the profiles of other users with similar movie interests. Connect with them to discuss movies and share recommendations.
+
+### Scanning and Storing Tickets
+4. **Digitize Tickets**: Scan your physical movie tickets using the app's built-in scanner. This allows you to convert them into a digital format and store them in your profile.
+
+### Viewing History and Recommendations
+5. **Track Your Viewing History**: Access your history to see all the movies you’ve watched. This feature helps keep a record of your movie experiences.
+
+6. **Receive Recommendations**: Based on your viewing history and preferences, PixelPal will recommend new movies you might enjoy.
+
+### Notifications and Alerts
+7. **Set Up Notifications**: Enable notifications to get alerts on new movie releases, upcoming showtimes, and events that might interest you.
+
+These features are designed to enhance your movie-watching experience and help you connect with like-minded individuals. Enjoy discovering, watching, and discussing your favorite films with PixelPal!
+
 
 ## Contributing
 We welcome contributions from the community. If you'd like to contribute, please fork the repository and submit a pull request.
@@ -46,4 +65,4 @@ We welcome contributions from the community. If you'd like to contribute, please
 PixelPal is released under the [MIT License](LICENSE.md). See the LICENSE file for more details.
 
 ## Contact Information
-For support or queries, please contact us at [your-email@example.com].
+For support or queries, please contact us at [Casey](e1122625@u.nus.edu)&[Aiden](e1122634@u.nus.edu).
