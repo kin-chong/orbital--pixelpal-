@@ -10,7 +10,8 @@ class FrontPage extends StatefulWidget {
   _FrontPageState createState() => _FrontPageState();
 }
 
-class _FrontPageState extends State<FrontPage> with SingleTickerProviderStateMixin {
+class _FrontPageState extends State<FrontPage>
+    with SingleTickerProviderStateMixin {
   final MovieService _movieService = MovieService();
 
   Future<List<dynamic>>? _upcomingMovies;
@@ -63,7 +64,9 @@ class _FrontPageState extends State<FrontPage> with SingleTickerProviderStateMix
           children: [
             _buildUpcomingMoviesList(),
             _buildPopularMoviesList(),
-            Center(child: Text('Favorite Movies', style: TextStyle(color: Colors.white))),
+            Center(
+                child: Text('Favorite Movies',
+                    style: TextStyle(color: Colors.white))),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -99,6 +102,7 @@ class _FrontPageState extends State<FrontPage> with SingleTickerProviderStateMix
               tooltip: 'Profile',
             ),
           ],
+          currentIndex: 0,
           onTap: (index) {
             switch (index) {
               case 0:

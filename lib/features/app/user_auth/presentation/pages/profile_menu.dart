@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileMenu extends StatelessWidget {
   const ProfileMenu({super.key});
@@ -58,6 +59,60 @@ class ProfileMenu extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
+        selectedItemColor: Colors.yellow,
+        unselectedItemColor: Colors.grey,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.home),
+            label: 'Home',
+            tooltip: 'Home Page',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.qrcode),
+            label: 'Scan',
+            tooltip: 'Scan Ticket',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.comments),
+            label: 'Forum',
+            tooltip: 'Forum',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.cog),
+            label: 'Settings',
+            tooltip: 'Settings',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.user),
+            label: 'Profile',
+            tooltip: 'Profile',
+          ),
+        ],
+        currentIndex: 4,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, '/front');
+              break;
+            case 1:
+              Navigator.pushNamed(context, '/scan');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/forum');
+              break;
+            case 3:
+              Navigator.pushNamed(context, '/settings');
+              break;
+            case 4:
+              Navigator.pushNamed(context, '/profile');
+              break;
+          }
+        },
       ),
     );
   }
