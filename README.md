@@ -1,9 +1,24 @@
-# PixelPal
+![pixelpal](assets/images/logo.png)
+
+# PixelPal 
 
 ## Introduction
 Welcome to PixelPal! This app is designed for movie lovers who want a smooth experience in finding their favorite movies while meeting new friends. PixelPal also digitizes physical movie tickets, allowing users to keep track of the movies they've watched and receive personalized recommendations for future viewing.
 
-## Features
+### Problem Motivation
+Many movie fans collect their tickets as a memento but often lose them; they also find it hard to connect with like-minded cinema lovers easily.
+
+### Level of Achievement
+**Apollo 11**
+
+### Project Scope
+**Short Version:**
+Developing a social connectivity platform for movie enthusiasts to digitally store and share their movie ticket experiences, discover new friends, and explore movie recommendations.
+
+**Detailed Version:**
+PixelPal is an innovative social networking application aimed at movie lovers who wish to enhance their film watching experience by digitally storing their physical movie tickets, sharing these memories with friends, and discovering new movies based on their tastes. The app leverages a unique feature set to connect users with similar interests, offering recommendations and reminders of past movie experiences to foster a community of engaged film enthusiasts.
+
+## (Proposed) Features
 - **Discover Movies**: Easily search and find movies that you love.
 - **Connect with Friends**: Meet and connect with new friends who share your movie interests.
 - **Digital Ticket Storage**: Convert your physical movie tickets into digital formats for easy tracking.
@@ -57,7 +72,6 @@ To get started with PixelPal, follow these simple steps:
 
 These features are designed to enhance your movie-watching experience and help you connect with like-minded individuals. Enjoy discovering, watching, and discussing your favorite films with PixelPal!
 
-
 ## Contributing
 We welcome contributions from the community. If you'd like to contribute, please fork the repository and submit a pull request.
 
@@ -65,4 +79,4 @@ We welcome contributions from the community. If you'd like to contribute, please
 PixelPal is released under the [MIT License](LICENSE.md). See the LICENSE file for more details.
 
 ## Contact Information
-For support or queries, please contact us at e1122625@u.nus.edu &e1122634@u.nus.edu
+For support or queries, please contact us at e1122625@u.nus.edu & e1122634@u.nus.edu
