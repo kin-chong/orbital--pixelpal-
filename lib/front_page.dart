@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'services/movie_service.dart';
+import 'movie_detail_page.dart'; // Import the MovieDetailPage
 
 class FrontPage extends StatefulWidget {
   const FrontPage({super.key});
@@ -14,13 +15,13 @@ class _FrontPageState extends State<FrontPage>
   final MovieService _movieService = MovieService();
 
   Future<List<dynamic>>? _upcomingMovies;
-  Future<List<dynamic>>? _popularMovies;
+  Future<List<dynamic>>? _currentlyShowingMovies;
 
   @override
   void initState() {
     super.initState();
     _upcomingMovies = _movieService.fetchUpcomingMovies();
-    _popularMovies = _movieService.fetchPopularMovies();
+    _currentlyShowingMovies = _movieService.fetchCurrentlyShowingMovies();
   }
 
   Future<void> _refreshUpcomingMovies() async {
@@ -142,56 +143,72 @@ class _FrontPageState extends State<FrontPage>
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 0.7,
+                childAspectRatio: 1,
               ),
               itemCount: snapshot.data?.length ?? 0,
               itemBuilder: (context, index) {
                 var movie = snapshot.data![index];
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    color: Colors.grey[850],
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MovieDetailPage(movieId: movie['id']),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Stack(
                       children: [
-                        Image.network(
-                          'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
-                          width: double.infinity,
-                          height: 225,
-                          fit: BoxFit.cover,
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                  'https://image.tmdb.org/t/p/w500${movie['poster_path']}'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                movie['title'],
-                                style: const TextStyle(
-                                  color: Colors.yellow,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(15),
+                                bottomRight: Radius.circular(15),
                               ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Release Date: ${movie['release_date']}',
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
+                            ),
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  movie['title'],
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                movie['overview'],
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Release Date: ${movie['release_date']}',
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                maxLines: 5,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -208,7 +225,7 @@ class _FrontPageState extends State<FrontPage>
 
   Widget _buildPopularMoviesList() {
     return FutureBuilder<List<dynamic>>(
-      future: _popularMovies,
+      future: _currentlyShowingMovies,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -220,56 +237,72 @@ class _FrontPageState extends State<FrontPage>
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.7,
+              childAspectRatio: 1,
             ),
             itemCount: snapshot.data?.length ?? 0,
             itemBuilder: (context, index) {
               var movie = snapshot.data![index];
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  color: Colors.grey[850],
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MovieDetailPage(movieId: movie['id']),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Stack(
                     children: [
-                      Image.network(
-                        'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
-                        width: double.infinity,
-                        height: 225,
-                        fit: BoxFit.cover,
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                'https://image.tmdb.org/t/p/w500${movie['poster_path']}'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              movie['title'],
-                              style: const TextStyle(
-                                color: Colors.yellow,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(15),
+                              bottomRight: Radius.circular(15),
                             ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Release Date: ${movie['release_date']}',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
+                          ),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                movie['title'],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              movie['overview'],
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
+                              const SizedBox(height: 5),
+                              Text(
+                                'Release Date: ${movie['release_date']}',
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 5,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ],
