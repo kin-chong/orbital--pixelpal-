@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
@@ -17,6 +19,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmpwdController = TextEditingController();
 
   @override
   void dispose() {
@@ -72,11 +75,12 @@ class _SignUpPageState extends State<SignUpPage> {
                       hintText: "Password",
                       isPasswordField: true,
                     ),
-                    /* SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     FormContainerWidget(
+                      controller: _confirmpwdController,
                       hintText: "Confirm Password",
                       isPasswordField: true,
-                    ), */
+                    ),
                   ],
                 ),
               ),
@@ -120,14 +124,18 @@ class _SignUpPageState extends State<SignUpPage> {
     String username = _usernameController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
+    String confirmPassword = _confirmpwdController.text;
 
-    User? user = await _auth.signUpWithEmailandPassword(email, password);
-
-    if (user != null) {
-      showToast(message: "Account has been successfully created");
-      Navigator.pushNamed(context, "/front");
+    if (password == confirmPassword) {
+      User? user = await _auth.signUpWithEmailandPassword(email, password);
+      if (user != null) {
+        showToast(message: "Account has been successfully created");
+        Navigator.pushNamed(context, "/front");
+      } else {
+        //showToast(message: "Some error happened");
+      }
     } else {
-      //showToast(message: "Some error happened");
+      showToast(message: "Passwords do not match!");
     }
   }
 }
