@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileMenu extends StatelessWidget {
-  const ProfileMenu({super.key});
+  ProfileMenu({super.key});
+
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,14 @@ class ProfileMenu extends StatelessWidget {
                     width: 500,
                   ),
                   const SizedBox(height: 10),
+                  /* Text(
+                    "Currently signed in as ${user?.email}",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                  ), */
                   GestureDetector(
                     onTap: () {
                       FirebaseAuth.instance.signOut();

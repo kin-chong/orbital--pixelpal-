@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         '/upcoming_movies': (context) => const UpcomingMoviesScreen(),
         '/forum': (context) =>
             const ForumPage(), // Ensure this widget is defined
-        '/profile': (context) => const ProfileMenu(), //temp log out page
+        '/profile': (context) => ProfileMenu(), //temp log out page
       },
     );
   }
