@@ -8,7 +8,7 @@ Welcome to PixelPal! This app is designed for movie lovers who want a smooth exp
 Many movie fans collect their tickets as a memento but often lose them; they also find it hard to connect with like-minded cinema lovers easily.
 
 ### Level of Achievement
-Apollo 11
+Gemini
 
 ### Project Scope
 **Short Version:**
