@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/settings.dart';
+import 'package:pixelpal/global/common/list_tile.dart';
 
 class ProfileMenu extends StatelessWidget {
   ProfileMenu({super.key});
@@ -11,68 +14,119 @@ class ProfileMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    'images/logo.png', // Path to your logo image
-                    width: 500,
-                  ),
-                  const SizedBox(height: 10),
-                  /* Text(
-                    "Currently signed in as ${user?.email}",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.center,
-                  ), */
-                  GestureDetector(
-                    onTap: () {
-                      FirebaseAuth.instance.signOut();
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    child: Container(
-                      width: 150,
-                      height: 45,
-                      decoration: BoxDecoration(
-                        color: Colors.yellow,
-                        borderRadius: BorderRadius.circular(18),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.asset(
+                  'images/logo.png', // Path to your logo image
+                  width: 500,
+                ),
+                SizedBox(height: 10),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfilePage(),
                       ),
-                      child: const Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.logout,
-                              color: Colors.black,
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              "Logout",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.person,
+                        color: Colors.white,
+                        size: 64,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Placeholder',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
+                SizedBox(height: 10),
+                MyListTile(
+                  icon: Icons.settings,
+                  text: 'Settings',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SettingsPage(),
+                      ),
+                    );
+                  },
+                ),
+                MyListTile(
+                  icon: Icons.abc_rounded,
+                  text: 'Placeholder',
+                  onTap: () {},
+                ),
+                MyListTile(
+                  icon: Icons.abc_rounded,
+                  text: 'Placeholder',
+                  onTap: () {},
+                ),
+                MyListTile(
+                  icon: Icons.abc_rounded,
+                  text: 'Placeholder',
+                  onTap: () {},
+                ),
+                MyListTile(
+                  icon: Icons.abc_rounded,
+                  text: 'Placeholder',
+                  onTap: () {},
+                ),
+              ],
+            ),
+            GestureDetector(
+              onTap: () {
+                FirebaseAuth.instance.signOut();
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+              child: Container(
+                width: 150,
+                height: 45,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 109, 1, 1),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: const Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.logout,
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        "Logout",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
-        selectedItemColor: Colors.yellow,
+        selectedItemColor: Color.fromARGB(255, 206, 186, 6),
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
         showUnselectedLabels: false,

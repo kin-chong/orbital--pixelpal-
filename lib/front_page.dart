@@ -71,7 +71,7 @@ class _FrontPageState extends State<FrontPage>
         ),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.black,
-          selectedItemColor: Colors.yellow,
+          selectedItemColor: Color.fromARGB(255, 206, 186, 6),
           unselectedItemColor: Colors.grey,
           showSelectedLabels: false,
           showUnselectedLabels: false,

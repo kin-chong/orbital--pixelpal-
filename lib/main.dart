@@ -3,11 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/splash_screen/splash_screen.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
-import 'features/app/user_auth/presentation/pages/login_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/login_page.dart';
 import 'front_page.dart';
 import 'forgot_password_page.dart';
 import 'email_sent_page.dart';
-import 'features/app/user_auth/presentation/pages/sign_up_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/sign_up_page.dart';
 import 'services/movie_service.dart';
 
 Future<void> main() async {
@@ -50,6 +50,8 @@ class MyApp extends StatelessWidget {
         '/forum': (context) =>
             const ForumPage(), // Ensure this widget is defined
         '/profile': (context) => ProfileMenu(), //temp log out page
+        //'/profilepage': (context) => ProfilePage(),
+        //'/settings': (context) => SettingsPage(),
       },
     );
   }
