@@ -93,17 +93,12 @@ class ProfileMenu extends StatelessWidget {
             tooltip: 'Forum',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.cog),
-            label: 'Settings',
-            tooltip: 'Settings',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.user),
             label: 'Profile',
             tooltip: 'Profile',
           ),
         ],
-        currentIndex: 4,
+        currentIndex: 3,
         onTap: (index) {
           switch (index) {
             case 0:
@@ -116,9 +111,6 @@ class ProfileMenu extends StatelessWidget {
               Navigator.pushNamed(context, '/forum');
               break;
             case 3:
-              Navigator.pushNamed(context, '/settings');
-              break;
-            case 4:
               Navigator.pushNamed(context, '/profile');
               break;
           }

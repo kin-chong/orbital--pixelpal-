@@ -92,11 +92,6 @@ class _FrontPageState extends State<FrontPage>
               tooltip: 'Forum',
             ),
             BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.cog),
-              label: 'Settings',
-              tooltip: 'Settings',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(FontAwesomeIcons.user),
               label: 'Profile',
               tooltip: 'Profile',
@@ -115,9 +110,6 @@ class _FrontPageState extends State<FrontPage>
                 Navigator.pushNamed(context, '/forum');
                 break;
               case 3:
-                Navigator.pushNamed(context, '/settings');
-                break;
-              case 4:
                 Navigator.pushNamed(context, '/profile');
                 break;
             }
@@ -153,7 +145,8 @@ class _FrontPageState extends State<FrontPage>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MovieDetailPage(movieId: movie['id']),
+                        builder: (context) =>
+                            MovieDetailPage(movieId: movie['id']),
                       ),
                     );
                   },
@@ -247,7 +240,8 @@ class _FrontPageState extends State<FrontPage>
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MovieDetailPage(movieId: movie['id']),
+                      builder: (context) =>
+                          MovieDetailPage(movieId: movie['id']),
                     ),
                   );
                 },
