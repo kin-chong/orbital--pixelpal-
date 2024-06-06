@@ -82,6 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             return ListView(
               children: [
+                SizedBox(height: 20),
                 Icon(
                   Icons.person,
                   size: 72,
@@ -93,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white),
                 ),
-                SizedBox(height: 50),
+                SizedBox(height: 25),
                 Padding(
                   padding: const EdgeInsets.only(left: 25.0),
                   child: Text(

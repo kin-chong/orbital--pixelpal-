@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -189,6 +190,8 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await googleSignIn.signIn();
+      //print(googleSignInAccount?.email);
+      String? email = googleSignInAccount?.email;
       if (googleSignInAccount != null) {
         final GoogleSignInAuthentication googleSignInAuthentication =
             await googleSignInAccount.authentication;
@@ -197,6 +200,19 @@ class _LoginPageState extends State<LoginPage> {
             accessToken: googleSignInAuthentication.accessToken);
 
         await _firebaseAuth.signInWithCredential(credential);
+
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(email)
+            .get();
+
+        if (!userDoc.exists) {
+          FirebaseFirestore.instance
+              .collection("Users")
+              .doc(email)
+              .set({'username': email, 'bio': 'Empty bio...'});
+        }
+
         Navigator.pushNamed(context, "/front");
       }
     } catch (e) {
