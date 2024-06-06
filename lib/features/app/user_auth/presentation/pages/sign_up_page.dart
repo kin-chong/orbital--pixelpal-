@@ -1,5 +1,6 @@
 // ignore_for_file: unused_local_variable
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
@@ -131,6 +132,11 @@ class _SignUpPageState extends State<SignUpPage> {
       if (user != null) {
         showToast(message: "Account has been successfully created");
         Navigator.pushNamed(context, "/front");
+
+        FirebaseFirestore.instance
+            .collection("Users")
+            .doc(email)
+            .set({'username': username, 'bio': 'Empty bio...'});
       } else {
         //showToast(message: "Some error happened");
       }
