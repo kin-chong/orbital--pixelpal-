@@ -1,8 +1,33 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
 
-class ForgotPasswordPage extends StatelessWidget {
+class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
+
+  @override
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+}
+
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  final _emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future passwordReset() async {
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: _emailController.text.trim());
+      Navigator.pushReplacementNamed(context, '/email_sent');
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+    //print(_emailController.text.trim());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +58,10 @@ class ForgotPasswordPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 25),
-              const SizedBox(
+              SizedBox(
                 width: 750, // Set the static width here
                 child: FormContainerWidget(
+                  controller: _emailController,
                   hintText: "Enter your email",
                   isPasswordField: false,
                 ),
@@ -43,7 +69,7 @@ class ForgotPasswordPage extends StatelessWidget {
               const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/email_sent');
+                  passwordReset();
                 },
                 child: Container(
                   width: 200,
