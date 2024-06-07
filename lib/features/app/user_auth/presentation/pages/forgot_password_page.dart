@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
+import 'package:pixelpal/global/common/toast.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -24,7 +25,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           .sendPasswordResetEmail(email: _emailController.text.trim());
       Navigator.pushReplacementNamed(context, '/email_sent');
     } on FirebaseAuthException catch (e) {
-      print(e);
+      if (e.code == 'user-not-found') {
+        showToast(message: "This email has not been registered with the app!");
+      } else {
+        showToast(message: e.message.toString());
+      }
     }
     //print(_emailController.text.trim());
   }

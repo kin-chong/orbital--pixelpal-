@@ -201,6 +201,9 @@ class _LoginPageState extends State<LoginPage> {
 
         await _firebaseAuth.signInWithCredential(credential);
 
+        /* print(googleSignInAccount.photoUrl);
+        print(googleSignInAccount.email); */
+
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection("Users")
             .doc(email)
