@@ -22,14 +22,14 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: Colors.grey[900],
         title: Text(
           "Edit $field",
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         content: TextField(
           autofocus: true,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             hintText: "Enter new $field",
-            hintStyle: TextStyle(color: Colors.grey),
+            hintStyle: const TextStyle(color: Colors.grey),
           ),
           onChanged: (value) {
             newValue = value;
@@ -37,14 +37,14 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         actions: [
           TextButton(
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(color: Colors.white),
             ),
             onPressed: () => Navigator.pop(context),
           ),
           TextButton(
-            child: Text(
+            child: const Text(
               'Save',
               style: TextStyle(color: Colors.yellow),
             ),
@@ -54,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
 
-    if (newValue.trim().length > 0) {
+    if (newValue.trim().isNotEmpty) {
       await usersCollection.doc(user?.email).update({field: newValue});
     }
   }
@@ -64,11 +64,11 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Profile",
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.black,
       ),
       body: StreamBuilder<DocumentSnapshot>(
@@ -82,21 +82,21 @@ class _ProfilePageState extends State<ProfilePage> {
 
             return ListView(
               children: [
-                SizedBox(height: 20),
-                Icon(
+                const SizedBox(height: 20),
+                const Icon(
                   Icons.person,
                   size: 72,
                   color: Colors.white,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   user!.email!,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
-                SizedBox(height: 25),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
+                const SizedBox(height: 25),
+                const Padding(
+                  padding: EdgeInsets.only(left: 25.0),
                   child: Text(
                     'My Details',
                     style: TextStyle(color: Colors.white),

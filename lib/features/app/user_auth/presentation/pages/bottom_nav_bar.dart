@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class BottomNavigationBarWidget extends StatelessWidget {
+class BottomNavBar extends StatelessWidget {
   final int currentIndex;
-  final ValueChanged<int> onTap;
+  final Function(int) onTap;
 
-  const BottomNavigationBarWidget({
-    super.key,
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const BottomNavBar({required this.currentIndex, required this.onTap, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       backgroundColor: Colors.black,
-      selectedItemColor: Colors.yellow,
+      selectedItemColor: const Color.fromARGB(255, 206, 186, 6),
       unselectedItemColor: Colors.grey,
       showSelectedLabels: false,
       showUnselectedLabels: false,
-      currentIndex: currentIndex,
-      onTap: onTap,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(FontAwesomeIcons.home),
@@ -38,16 +33,13 @@ class BottomNavigationBarWidget extends StatelessWidget {
           tooltip: 'Forum',
         ),
         BottomNavigationBarItem(
-          icon: Icon(FontAwesomeIcons.cog),
-          label: 'Settings',
-          tooltip: 'Settings',
-        ),
-        BottomNavigationBarItem(
           icon: Icon(FontAwesomeIcons.user),
           label: 'Profile',
           tooltip: 'Profile',
         ),
       ],
+      currentIndex: currentIndex,
+      onTap: onTap,
     );
   }
 }

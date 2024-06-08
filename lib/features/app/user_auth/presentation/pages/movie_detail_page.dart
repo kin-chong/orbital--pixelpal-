@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'services/movie_service.dart';
+import '../../../../../services/movie_service.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final int movieId;
 
-  const MovieDetailPage({Key? key, required this.movieId}) : super(key: key);
+  const MovieDetailPage({super.key, required this.movieId});
 
   @override
   _MovieDetailPageState createState() => _MovieDetailPageState();
@@ -36,7 +36,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         backgroundColor: Colors.black,
         title: const Text('Movie Details', style: TextStyle(color: Colors.white)),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.yellow), // Make the back button yellow
+          icon: const Icon(Icons.arrow_back, color: Colors.yellow), // Make the back button yellow
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -104,9 +104,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Text(
+                    const Text(
                       'Actors',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.yellow,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -146,9 +146,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     ),
                     const SizedBox(height: 20),
                     if (_youtubePlayerController != null) ...[
-                      Text(
+                      const Text(
                         'Trailer',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.yellow,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -169,9 +169,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                         style: TextStyle(color: Colors.white70),
                       ),
                     const SizedBox(height: 20),
-                    Text(
+                    const Text(
                       'Available On',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.yellow,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
