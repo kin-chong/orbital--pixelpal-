@@ -18,10 +18,10 @@ Future<void> main() async {
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
-        apiKey: "your_api_key",
-        appId: "your_app_id",
-        messagingSenderId: "your_messaging_sender_id",
-        projectId: "your_project_id",
+        apiKey: "AIzaSyAOjo0ICshmA127L-EHlW2fItGzk4kQ8ww",
+        appId: "1:374638859313:web:50144fd78cdd4fc5013110",
+        messagingSenderId: "374638859313",
+        projectId: "orbital-pixelpal",
       ),
     );
   } else {
