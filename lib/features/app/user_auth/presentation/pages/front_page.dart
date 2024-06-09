@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../../../../services/movie_service.dart';
-import '../../../../../movie_detail_page.dart'; // Import the MovieDetailPage
+import 'package:pixelpal/features/app/user_auth/presentation/pages/movie_detail_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/no_animation_page_route.dart';
+import 'package:pixelpal/services/movie_service.dart';
 
 class FrontPage extends StatefulWidget {
   const FrontPage({super.key});
@@ -69,34 +71,7 @@ class _FrontPageState extends State<FrontPage>
                     style: TextStyle(color: Colors.white))),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.black,
-          selectedItemColor: Color.fromARGB(255, 206, 186, 6),
-          unselectedItemColor: Colors.grey,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.home),
-              label: 'Home',
-              tooltip: 'Home Page',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.qrcode),
-              label: 'Scan',
-              tooltip: 'Scan Ticket',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.comments),
-              label: 'Forum',
-              tooltip: 'Forum',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.user),
-              label: 'Profile',
-              tooltip: 'Profile',
-            ),
-          ],
+        bottomNavigationBar: BottomNavBar(
           currentIndex: 0,
           onTap: (index) {
             switch (index) {

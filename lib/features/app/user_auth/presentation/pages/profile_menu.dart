@@ -28,11 +28,11 @@ class ProfileMenu extends StatelessWidget {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (!snapshot.hasData || snapshot.data?.data() == null) {
-            return Center(
+            return const Center(
               child: Text(
                 "No data available",
                 style: TextStyle(color: Colors.white),
@@ -51,41 +51,44 @@ class ProfileMenu extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      'images/logo.png', // Path to your logo image
-                      width: 500,
+                    Container(
+                      margin: const EdgeInsets.only(top: 30.0), // Adjust the top margin as needed
+                      child: Image.asset(
+                        'assets/images/logo.png', // Path to your logo image
+                        width: 200, // Adjust the width as needed
+                      ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProfilePage(),
+                            builder: (context) => const ProfilePage(),
                           ),
                         );
                       },
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.person,
                             color: Colors.white,
                             size: 96,
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 userData['username'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 35,
                                 ),
                               ),
                               Text(
                                 userData['bio'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
                                 ),
@@ -95,7 +98,7 @@ class ProfileMenu extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     MyListTile(
                       icon: Icons.settings,
                       text: 'Settings',
@@ -103,7 +106,7 @@ class ProfileMenu extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SettingsPage(),
+                            builder: (context) => const SettingsPage(),
                           ),
                         );
                       },
@@ -139,7 +142,7 @@ class ProfileMenu extends StatelessWidget {
                     width: 150,
                     height: 45,
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 109, 1, 1),
+                      color: const Color.fromARGB(255, 109, 1, 1),
                       borderRadius: BorderRadius.circular(18),
                     ),
                     child: const Center(
@@ -173,7 +176,7 @@ class ProfileMenu extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
-        selectedItemColor: Color.fromARGB(255, 206, 186, 6),
+        selectedItemColor: const Color.fromARGB(255, 206, 186, 6),
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
         showUnselectedLabels: false,

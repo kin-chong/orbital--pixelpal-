@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/splash_screen/splash_screen.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/login_page.dart';
-import 'features/app/user_auth/presentation/pages/front_page.dart';
-import 'features/app/user_auth/presentation/pages/forgot_password_page.dart';
-import 'features/app/user_auth/presentation/pages/email_sent_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/forgot_password_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/email_sent_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/sign_up_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
+//import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_page.dart'; // Add ScanPage if it's not already added
+//import 'package:pixelpal/features/app/user_auth/presentation/pages/create_post_page.dart'; // Add CreatePostPage if it's not already added
 import 'services/movie_service.dart';
 
 Future<void> main() async {
@@ -34,7 +37,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Orbital App',
+      title: 'PixelPal',
       theme: ThemeData(
         primarySwatch: Colors.yellow,
       ),
@@ -47,11 +50,11 @@ class MyApp extends StatelessWidget {
         '/email_sent': (context) => const EmailSentPage(),
         '/signup': (context) => const SignUpPage(),
         '/upcoming_movies': (context) => const UpcomingMoviesScreen(),
-        '/forum': (context) =>
-            const ForumPage(), // Ensure this widget is defined
-        '/profile': (context) => ProfileMenu(), //temp log out page
-        //'/profilepage': (context) => ProfilePage(),
-        //'/settings': (context) => SettingsPage(),
+        '/forum': (context) => const ForumPage(),
+        '/profile': (context) => ProfileMenu(),
+        '/home': (context) => const FrontPage(), // Ensure this route is added
+        //'/scan': (context) => const ScanPage(), // Ensure ScanPage is added
+        //'/createPost': (context) => const CreatePostPage(), // Ensure CreatePostPage is added
       },
     );
   }
@@ -81,7 +84,12 @@ class _UpcomingMoviesScreenState extends State<UpcomingMoviesScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: const TextStyle(color: Colors.white),
+              ),
+            );
           } else {
             return ListView.builder(
               itemCount: snapshot.data?.length ?? 0,
@@ -104,22 +112,6 @@ class _UpcomingMoviesScreenState extends State<UpcomingMoviesScreen> {
             );
           }
         },
-      ),
-    );
-  }
-}
-
-class ForumPage extends StatelessWidget {
-  const ForumPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Forum'),
-      ),
-      body: const Center(
-        child: Text('Forum Page Content'),
       ),
     );
   }
