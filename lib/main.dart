@@ -9,6 +9,7 @@ import 'package:pixelpal/features/app/user_auth/presentation/pages/forgot_passwo
 import 'package:pixelpal/features/app/user_auth/presentation/pages/email_sent_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/sign_up_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
+import 'package:pixelpal/global/common/theme.dart';
 //import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_page.dart'; // Add ScanPage if it's not already added
 //import 'package:pixelpal/features/app/user_auth/presentation/pages/create_post_page.dart'; // Add CreatePostPage if it's not already added
 import 'services/movie_service.dart';
@@ -38,9 +39,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'PixelPal',
-      theme: ThemeData(
-        primarySwatch: Colors.yellow,
-      ),
+      theme: lightMode,
+      darkTheme: darkMode,
       initialRoute: '/login',
       routes: {
         '/splash_screen': (context) => const SplashScreen(),

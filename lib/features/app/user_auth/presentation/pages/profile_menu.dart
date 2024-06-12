@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/settings.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/theme_page.dart';
 import 'package:pixelpal/global/common/list_tile.dart';
 
 class ProfileMenu extends StatelessWidget {
@@ -14,7 +15,7 @@ class ProfileMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")
@@ -51,8 +52,10 @@ class ProfileMenu extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 30.0), // Adjust the top margin as needed
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 10,
+                          left: 25.0), // Adjust the left padding as needed
                       child: Image.asset(
                         'assets/images/logo.png', // Path to your logo image
                         width: 200, // Adjust the width as needed
@@ -112,9 +115,16 @@ class ProfileMenu extends StatelessWidget {
                       },
                     ),
                     MyListTile(
-                      icon: Icons.abc_rounded,
-                      text: 'Placeholder',
-                      onTap: () {},
+                      icon: Icons.format_paint,
+                      text: 'Themes',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ThemePage(),
+                          ),
+                        );
+                      },
                     ),
                     MyListTile(
                       icon: Icons.abc_rounded,
@@ -175,7 +185,7 @@ class ProfileMenu extends StatelessWidget {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         selectedItemColor: const Color.fromARGB(255, 206, 186, 6),
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,

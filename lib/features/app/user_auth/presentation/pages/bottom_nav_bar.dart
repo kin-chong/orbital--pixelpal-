@@ -5,13 +5,14 @@ class BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const BottomNavBar({required this.currentIndex, required this.onTap, Key? key})
+  const BottomNavBar(
+      {required this.currentIndex, required this.onTap, Key? key})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       selectedItemColor: const Color.fromARGB(255, 206, 186, 6),
       unselectedItemColor: Colors.grey,
       showSelectedLabels: false,
