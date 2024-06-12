@@ -2,6 +2,7 @@
 
 
     "cmake.configureOnOpen": true,
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cmake.sourceDirectory": "C:/Users/kinch/Documents/GitHub/orbital--pixelpal-/linux"
 
 }

@@ -5,8 +5,10 @@ class EmailSentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isLightTheme = Theme.of(context).brightness == Brightness.light;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -14,17 +16,17 @@ class EmailSentPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                'images/logo.png', // Path to your logo image
+                isLightTheme ? 'images/logo_dark.png' : 'images/logo.png',
                 width: 500,
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(width: 10),
                   Text(
                     'Email Sent!',
                     style: TextStyle(
-                      color: Colors.yellow,
+                      color: Theme.of(context).colorScheme.secondary,
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
@@ -32,10 +34,10 @@ class EmailSentPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 'Please check your email for further instructions.',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.tertiary,
                   fontSize: 18,
                 ),
                 textAlign: TextAlign.center,
@@ -49,14 +51,15 @@ class EmailSentPage extends StatelessWidget {
                   width: 150,
                   height: 45,
                   decoration: BoxDecoration(
-                    color: Colors.yellow,
+                    color: Theme.of(context).colorScheme.secondary,
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       "Back to Login",
                       style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

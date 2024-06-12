@@ -32,8 +32,10 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isLightTheme = Theme.of(context).brightness == Brightness.light;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -41,14 +43,14 @@ class _SignUpPageState extends State<SignUpPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                'assets/images/logo.png',
+                isLightTheme ? 'images/logo_dark.png' : 'images/logo.png',
                 width: 500,
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 'Sign Up',
                 style: TextStyle(
-                  color: Colors.yellow,
+                  color: Theme.of(context).colorScheme.secondary,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
@@ -92,14 +94,15 @@ class _SignUpPageState extends State<SignUpPage> {
                   width: 100,
                   height: 45,
                   decoration: BoxDecoration(
-                    color: Colors.yellow,
+                    color: Theme.of(context).colorScheme.secondary,
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       "Sign Up",
                       style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -109,9 +112,10 @@ class _SignUpPageState extends State<SignUpPage> {
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
-                child: const Text(
+                child: Text(
                   'Back to Login',
-                  style: TextStyle(color: Colors.white),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
                 ),
               ),
             ],

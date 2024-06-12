@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pixelpal/global/common/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class ThemePage extends StatefulWidget {
   const ThemePage({super.key});
@@ -20,14 +22,14 @@ class _ThemePageState extends State<ThemePage> {
             title: Text('Light Mode'),
             leading: Icon(Icons.wb_sunny),
             onTap: () {
-              // Logic to switch to light mode will go here
+              Provider.of<ThemeProvider>(context, listen: false).setLightMode();
             },
           ),
           ListTile(
             title: Text('Dark Mode'),
             leading: Icon(Icons.nights_stay),
             onTap: () {
-              // Logic to switch to dark mode will go here
+              Provider.of<ThemeProvider>(context, listen: false).setDarkMode();
             },
           ),
         ],

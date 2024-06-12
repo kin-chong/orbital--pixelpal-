@@ -10,6 +10,8 @@ import 'package:pixelpal/features/app/user_auth/presentation/pages/email_sent_pa
 import 'package:pixelpal/features/app/user_auth/presentation/pages/sign_up_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
 import 'package:pixelpal/global/common/theme.dart';
+import 'package:pixelpal/global/common/theme_provider.dart';
+import 'package:provider/provider.dart';
 //import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_page.dart'; // Add ScanPage if it's not already added
 //import 'package:pixelpal/features/app/user_auth/presentation/pages/create_post_page.dart'; // Add CreatePostPage if it's not already added
 import 'services/movie_service.dart';
@@ -28,7 +30,12 @@ Future<void> main() async {
   } else {
     await Firebase.initializeApp();
   }
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -39,8 +46,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'PixelPal',
-      theme: lightMode,
-      darkTheme: darkMode,
+      theme: Provider.of<ThemeProvider>(context).themeData,
       initialRoute: '/login',
       routes: {
         '/splash_screen': (context) => const SplashScreen(),

@@ -31,8 +31,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isLightTheme = Theme.of(context).brightness == Brightness.light;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -40,14 +42,14 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                'assets/images/logo.png',
+                isLightTheme ? 'images/logo_dark.png' : 'images/logo.png',
                 width: 500,
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 'Login',
                 style: TextStyle(
-                  color: Colors.yellow,
+                  color: Theme.of(context).colorScheme.secondary,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
@@ -74,9 +76,10 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         Navigator.pushNamed(context, '/forgot_password');
                       },
-                      child: const Text(
+                      child: Text(
                         'Forgot Password?',
-                        style: TextStyle(color: Colors.yellow),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
                       ),
                     ),
                   ],
@@ -95,11 +98,12 @@ class _LoginPageState extends State<LoginPage> {
                           color: Theme.of(context).colorScheme.secondary,
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
                             "Login",
                             style: TextStyle(
-                                color: Colors.black,
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -141,10 +145,10 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     'No account?',
                     style: TextStyle(
-                      color: Colors.yellow,
+                      color: Theme.of(context).colorScheme.tertiary,
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
                     ),
@@ -153,9 +157,10 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       Navigator.pushNamed(context, '/signup');
                     },
-                    child: const Text(
+                    child: Text(
                       'Sign Up',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                   ),
                 ],

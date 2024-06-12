@@ -14,6 +14,8 @@ class ProfileMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isLightTheme = Theme.of(context).brightness == Brightness.light;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: StreamBuilder<DocumentSnapshot>(
@@ -33,10 +35,10 @@ class ProfileMenu extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data?.data() == null) {
-            return const Center(
+            return Center(
               child: Text(
                 "No data available",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
               ),
             );
           }
@@ -57,7 +59,9 @@ class ProfileMenu extends StatelessWidget {
                           top: 10,
                           left: 25.0), // Adjust the left padding as needed
                       child: Image.asset(
-                        'assets/images/logo.png', // Path to your logo image
+                        isLightTheme
+                            ? 'images/logo_dark.png'
+                            : 'images/logo.png', // Path to your logo image
                         width: 200, // Adjust the width as needed
                       ),
                     ),
@@ -73,9 +77,9 @@ class ProfileMenu extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.person,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.tertiary,
                             size: 96,
                           ),
                           const SizedBox(width: 10),
@@ -84,15 +88,15 @@ class ProfileMenu extends StatelessWidget {
                             children: [
                               Text(
                                 userData['username'],
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.tertiary,
                                   fontSize: 35,
                                 ),
                               ),
                               Text(
                                 userData['bio'],
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.tertiary,
                                   fontSize: 15,
                                 ),
                               ),
@@ -152,7 +156,7 @@ class ProfileMenu extends StatelessWidget {
                     width: 150,
                     height: 45,
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 109, 1, 1),
+                      color: Colors.red,
                       borderRadius: BorderRadius.circular(18),
                     ),
                     child: const Center(
