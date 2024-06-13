@@ -60,8 +60,8 @@ class ProfileMenu extends StatelessWidget {
                           left: 25.0), // Adjust the left padding as needed
                       child: Image.asset(
                         isLightTheme
-                            ? 'images/logo_dark.png'
-                            : 'images/logo.png', // Path to your logo image
+                            ? 'assets/images/logo_dark.png'
+                            : 'assets/images/logo.png',
                         width: 200, // Adjust the width as needed
                       ),
                     ),
@@ -190,7 +190,7 @@ class ProfileMenu extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        selectedItemColor: const Color.fromARGB(255, 206, 186, 6),
+        selectedItemColor: Theme.of(context).colorScheme.secondary,
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
         showUnselectedLabels: false,

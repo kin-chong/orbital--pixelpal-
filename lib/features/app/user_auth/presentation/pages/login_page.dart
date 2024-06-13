@@ -42,7 +42,9 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                isLightTheme ? 'images/logo_dark.png' : 'images/logo.png',
+                isLightTheme
+                    ? 'assets/images/logo_dark.png'
+                    : 'assets/images/logo.png',
                 width: 500,
               ),
               const SizedBox(height: 10),
