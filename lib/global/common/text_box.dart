@@ -15,7 +15,7 @@ class MyTextBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.only(left: 15, bottom: 15),
@@ -28,20 +28,21 @@ class MyTextBox extends StatelessWidget {
             children: [
               Text(
                 sectionName,
-                style: const TextStyle(color: Color.fromARGB(164, 255, 255, 255)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
               IconButton(
                 onPressed: onPressed,
-                icon: const Icon(
+                icon: Icon(
                   Icons.edit,
-                  color: Color.fromARGB(164, 255, 255, 255),
+                  color: Theme.of(context).colorScheme.tertiary,
                 ),
               )
             ],
           ),
           Text(
             text,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
           ),
         ],
       ),
