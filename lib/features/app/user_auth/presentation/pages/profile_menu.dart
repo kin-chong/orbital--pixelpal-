@@ -54,6 +54,7 @@ class ProfileMenu extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 40),
                     Padding(
                       padding: const EdgeInsets.only(
                           top: 10,
@@ -93,11 +94,18 @@ class ProfileMenu extends StatelessWidget {
                                   fontSize: 35,
                                 ),
                               ),
-                              Text(
-                                userData['bio'],
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                  fontSize: 15,
+                              Container(
+                                width: 200, // Adjust width as needed
+                                child: Text(
+                                  userData['bio'],
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.tertiary,
+                                    fontSize: 15,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines:
+                                      1, // Set the maximum number of lines
                                 ),
                               ),
                             ],
