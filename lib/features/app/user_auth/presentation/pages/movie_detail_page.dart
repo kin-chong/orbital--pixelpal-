@@ -31,12 +31,16 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text('Movie Details', style: TextStyle(color: Colors.white)),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Text('Movie Details',
+            style: TextStyle(color: Theme.of(context).colorScheme.tertiary)),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.yellow), // Make the back button yellow
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context)
+                  .colorScheme
+                  .tertiary), // Make the back button yellow
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -48,13 +52,18 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           } else if (snapshot.hasError) {
             return Center(
                 child: Text('Error: ${snapshot.error}',
-                    style: const TextStyle(color: Colors.white)));
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary)));
           } else {
             final movie = snapshot.data!;
             final actors = movie['credits']['cast'];
             final trailers = movie['videos']['results'];
             final genres = movie['genres'];
-            final platforms = ['Netflix', 'Amazon Prime', 'Disney+']; // Example platforms
+            final platforms = [
+              'Netflix',
+              'Amazon Prime',
+              'Disney+'
+            ]; // Example platforms
 
             if (trailers.isNotEmpty) {
               final trailerKey = trailers[0]['key'];
@@ -74,14 +83,16 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AspectRatio(
-                      aspectRatio: 2 / 3, // Adjust the aspect ratio based on the poster's typical aspect ratio
+                      aspectRatio: 2 /
+                          3, // Adjust the aspect ratio based on the poster's typical aspect ratio
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           image: DecorationImage(
                             image: NetworkImage(
                                 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'),
-                            fit: BoxFit.contain, // Ensure the full poster is displayed
+                            fit: BoxFit
+                                .contain, // Ensure the full poster is displayed
                           ),
                         ),
                       ),
@@ -89,8 +100,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     const SizedBox(height: 20),
                     Text(
                       movie['title'],
-                      style: const TextStyle(
-                        color: Colors.yellow,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -98,16 +109,16 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     const SizedBox(height: 10),
                     Text(
                       'Genres: ${genres.map((genre) => genre['name']).join(', ')}',
-                      style: const TextStyle(
-                        color: Colors.white70,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary,
                         fontSize: 16,
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       'Actors',
                       style: TextStyle(
-                        color: Colors.yellow,
+                        color: Theme.of(context).colorScheme.secondary,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -132,8 +143,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                 const SizedBox(height: 5),
                                 Text(
                                   actor['name'],
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.tertiary,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -146,10 +158,10 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     ),
                     const SizedBox(height: 20),
                     if (_youtubePlayerController != null) ...[
-                      const Text(
+                      Text(
                         'Trailer',
                         style: TextStyle(
-                          color: Colors.yellow,
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -158,7 +170,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       YoutubePlayer(
                         controller: _youtubePlayerController!,
                         showVideoProgressIndicator: true,
-                        progressIndicatorColor: Colors.amber,
+                        progressIndicatorColor: Colors.brown,
                         onReady: () {
                           _youtubePlayerController!.addListener(() {});
                         },
@@ -169,10 +181,10 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                         style: TextStyle(color: Colors.white70),
                       ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       'Available On',
                       style: TextStyle(
-                        color: Colors.yellow,
+                        color: Theme.of(context).colorScheme.secondary,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -182,10 +194,14 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: platforms
                           .map((platform) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
                                 child: Text(
                                   platform,
-                                  style: const TextStyle(color: Colors.white70),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary),
                                 ),
                               ))
                           .toList(),

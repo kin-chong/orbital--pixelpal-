@@ -36,8 +36,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isLightTheme = Theme.of(context).brightness == Brightness.light;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -45,17 +47,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                'images/logo.png', // Path to your logo image
+                isLightTheme ? 'images/logo_dark.png' : 'images/logo.png',
                 width: 500,
               ),
               const SizedBox(height: 20),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     'Forgot Password',
                     style: TextStyle(
-                      color: Colors.yellow,
+                      color: Theme.of(context).colorScheme.secondary,
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
@@ -80,14 +82,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   width: 200,
                   height: 45,
                   decoration: BoxDecoration(
-                    color: Colors.yellow,
+                    color: Theme.of(context).colorScheme.secondary,
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       "Reset Password",
                       style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -109,9 +112,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
-                child: const Text(
+                child: Text(
                   'Back to Login',
-                  style: TextStyle(color: Colors.white),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
                 ),
               ),
             ],

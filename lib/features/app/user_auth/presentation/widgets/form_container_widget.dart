@@ -12,7 +12,8 @@ class FormContainerWidget extends StatefulWidget {
   final ValueChanged<String>? onFieldSubmitted;
   final TextInputType? inputType;
 
-  const FormContainerWidget({super.key, 
+  const FormContainerWidget({
+    super.key,
     this.controller,
     this.isPasswordField,
     this.fieldKey,
@@ -42,7 +43,7 @@ class _FormContainerWidgetState extends State<FormContainerWidget> {
         borderRadius: BorderRadius.circular(5),
       ),
       child: TextFormField(
-        style: const TextStyle(color: Colors.yellow),
+        style: TextStyle(color: Theme.of(context).colorScheme.secondary),
         controller: widget.controller,
         keyboardType: widget.inputType,
         key: widget.fieldKey,
@@ -51,13 +52,15 @@ class _FormContainerWidgetState extends State<FormContainerWidget> {
         validator: widget.validator,
         onFieldSubmitted: widget.onFieldSubmitted,
         decoration: InputDecoration(
-          enabledBorder:
-              const OutlineInputBorder(borderSide: BorderSide(color: Colors.yellow)),
-          focusedBorder:
-              const OutlineInputBorder(borderSide: BorderSide(color: Colors.yellow)),
-          filled: false,
+          enabledBorder: OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).colorScheme.secondary)),
+          focusedBorder: OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).colorScheme.secondary)),
+          filled: true,
           hintText: widget.hintText,
-          hintStyle: const TextStyle(color: Color.fromARGB(143, 182, 154, 71)),
+          hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
           suffixIcon: GestureDetector(
             onTap: () {
               setState(() {
@@ -67,7 +70,9 @@ class _FormContainerWidgetState extends State<FormContainerWidget> {
             child: widget.isPasswordField == true
                 ? Icon(
                     _obscureText ? Icons.visibility_off : Icons.visibility,
-                    color: _obscureText == false ? Colors.yellow : Colors.grey,
+                    color: _obscureText == false
+                        ? Theme.of(context).colorScheme.secondary
+                        : Theme.of(context).colorScheme.tertiary,
                   )
                 : const Text(""),
           ),

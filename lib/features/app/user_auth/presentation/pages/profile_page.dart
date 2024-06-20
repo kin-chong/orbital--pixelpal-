@@ -62,14 +62,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Profile",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: Colors.black,
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.secondary),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
@@ -83,23 +84,25 @@ class _ProfilePageState extends State<ProfilePage> {
             return ListView(
               children: [
                 const SizedBox(height: 20),
-                const Icon(
+                Icon(
                   Icons.person,
                   size: 72,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
                 const SizedBox(height: 10),
                 Text(
                   user!.email!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
                 ),
                 const SizedBox(height: 25),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(left: 25.0),
                   child: Text(
                     'My Details',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary),
                   ),
                 ),
                 MyTextBox(
