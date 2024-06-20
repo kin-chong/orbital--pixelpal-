@@ -12,8 +12,8 @@ import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.da
 import 'package:pixelpal/global/common/theme.dart';
 import 'package:pixelpal/global/common/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/create_post_page.dart'; // Add CreatePostPage
 //import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_page.dart'; // Add ScanPage if it's not already added
-//import 'package:pixelpal/features/app/user_auth/presentation/pages/create_post_page.dart'; // Add CreatePostPage if it's not already added
 import 'services/movie_service.dart';
 
 Future<void> main() async {
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => ProfileMenu(),
         '/home': (context) => const FrontPage(), // Ensure this route is added
         //'/scan': (context) => const ScanPage(), // Ensure ScanPage is added
-        //'/createPost': (context) => const CreatePostPage(), // Ensure CreatePostPage is added
+        '/createPost': (context) => const CreatePostPage(), // Ensure CreatePostPage is added
       },
     );
   }
