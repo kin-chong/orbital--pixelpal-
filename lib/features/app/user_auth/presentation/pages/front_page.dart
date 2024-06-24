@@ -37,22 +37,22 @@ class _FrontPageState extends State<FrontPage>
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
-          backgroundColor: Colors.black,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           automaticallyImplyLeading: false,
-          title: const Text(
+          title: Text(
             'PixelPal',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48.0),
             child: Container(
-              color: Colors.black,
-              child: const TabBar(
+              color: Theme.of(context).colorScheme.surface,
+              child: TabBar(
                 indicatorColor: Colors.pinkAccent,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white54,
+                labelColor: Theme.of(context).colorScheme.tertiary,
+                unselectedLabelColor: Theme.of(context).colorScheme.tertiary,
                 tabs: [
                   Tab(text: 'Upcoming'),
                   Tab(text: 'Popular'),
@@ -66,9 +66,10 @@ class _FrontPageState extends State<FrontPage>
           children: [
             _buildUpcomingMoviesList(),
             _buildPopularMoviesList(),
-            const Center(
+            Center(
                 child: Text('Favorite Movies',
-                    style: TextStyle(color: Colors.white))),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary))),
           ],
         ),
         bottomNavigationBar: BottomNavBar(

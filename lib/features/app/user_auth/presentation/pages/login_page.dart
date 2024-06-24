@@ -90,133 +90,148 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isLightTheme = Theme.of(context).brightness == Brightness.light;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'assets/images/logo.png',
-                width: 500,
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Login',
-                style: TextStyle(
-                  color: Colors.yellow,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 25),
-              SizedBox(
-                width: 750,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    FormContainerWidget(
-                      controller: _emailController,
-                      hintText: "Email",
-                      isPasswordField: false,
+        child: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    isLightTheme
+                        ? 'assets/images/logo_dark.png'
+                        : 'assets/images/logo.png',
+                    width: 500,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Login',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 20),
-                    FormContainerWidget(
-                      controller: _passwordController,
-                      hintText: "Password",
-                      isPasswordField: true,
-                    ),
-                    const SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/forgot_password');
-                      },
-                      child: const Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: Colors.yellow),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 300,
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: _signIn,
-                      child: Container(
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: Colors.yellow,
-                          borderRadius: BorderRadius.circular(18),
+                  ),
+                  const SizedBox(height: 25),
+                  SizedBox(
+                    width: 750, // Set the static width here
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        FormContainerWidget(
+                          controller: _emailController,
+                          hintText: "Email",
+                          isPasswordField: false,
                         ),
-                        child: const Center(
+                        const SizedBox(height: 20),
+                        FormContainerWidget(
+                          controller: _passwordController,
+                          hintText: "Password",
+                          isPasswordField: true,
+                        ),
+                        const SizedBox(height: 10),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/forgot_password');
+                          },
                           child: Text(
-                            "Login",
+                            'Forgot Password?',
                             style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
+                                color: Theme.of(context).colorScheme.secondary),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                    const SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: _signInWithGoogle,
-                      child: Container(
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        child: const Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(FontAwesomeIcons.google, color: Colors.white),
-                              SizedBox(width: 10),
-                              Text(
-                                "Sign in with Google",
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: 300,
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: _signIn,
+                          child: Container(
+                            height: 45,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.secondary,
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Login",
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondary,
                                     fontWeight: FontWeight.bold),
                               ),
-                            ],
+                            ),
                           ),
                         ),
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () {
+                            _signInWithGoogle();
+                          },
+                          child: Container(
+                            height: 45,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: const Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(FontAwesomeIcons.google,
+                                      color: Colors.white),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Sign in with Google",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'No account?',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.tertiary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'No account?',
-                    style: TextStyle(
-                      color: Colors.yellow,
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/signup');
-                    },
-                    child: const Text(
-                      'Sign Up',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/signup');
+                        },
+                        child: Text(
+                          'Sign Up',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),

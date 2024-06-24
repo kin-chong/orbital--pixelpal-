@@ -9,16 +9,17 @@ class ForumPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(
           'Forum',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add, color: Colors.white),
+            icon:
+                Icon(Icons.add, color: Theme.of(context).colorScheme.tertiary),
             onPressed: () {
               Navigator.pushNamed(context, '/createPost');
             },
@@ -34,7 +35,7 @@ class ForumPage extends StatelessWidget {
             return Center(
               child: Text(
                 'Error: ${snapshot.error}',
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
               ),
             );
           } else {
@@ -45,8 +46,8 @@ class ForumPage extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
-                    color: Colors.grey[900],
-                    child: ListTile(
+                   color: Theme.of(context).colorScheme.primary,
+                   child: ListTile(
                       leading: CircleAvatar(
                         backgroundColor: Colors.grey,
                         child: Icon(
@@ -56,11 +57,15 @@ class ForumPage extends StatelessWidget {
                       ),
                       title: Text(
                         post['title'],
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary),
                       ),
                       subtitle: Text(
                         post['description'],
-                        style: const TextStyle(color: Colors.white70),
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer),
                       ),
                       onTap: () {
                         Navigator.push(
@@ -110,12 +115,12 @@ class ForumDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(
           'Forum Post Details',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
         ),
       ),
       body: FutureBuilder<DocumentSnapshot>(
@@ -128,14 +133,16 @@ class ForumDetailPage extends StatelessWidget {
             return Center(
               child: Text(
                 'Error: ${snapshot.error}',
-                style: const TextStyle(color: Colors.white),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
             );
           } else if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(
+            return Center(
               child: Text(
                 'Post not found',
-                style: TextStyle(color: Colors.white),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
             );
           } else {
@@ -147,17 +154,22 @@ class ForumDetailPage extends StatelessWidget {
                 children: [
                   Text(
                     post['title'],
-                    style: const TextStyle(color: Colors.white, fontSize: 24),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: 24),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     post['description'],
-                    style: const TextStyle(color: Colors.white70),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     'Comments:',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: 18),
                   ),
                   const SizedBox(height: 8),
                   Expanded(
@@ -175,7 +187,9 @@ class ForumDetailPage extends StatelessWidget {
                           return Center(
                             child: Text(
                               'Error: ${snapshot.error}',
-                              style: const TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.tertiary),
                             ),
                           );
                         } else {
@@ -193,7 +207,9 @@ class ForumDetailPage extends StatelessWidget {
                                       backgroundColor: Colors.grey,
                                       child: Icon(
                                         FontAwesomeIcons.user,
-                                        color: Colors.white,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .tertiary,
                                         size: 16,
                                       ),
                                     ),
@@ -205,8 +221,10 @@ class ForumDetailPage extends StatelessWidget {
                                         children: [
                                           Text(
                                             comment['userId'],
-                                            style: const TextStyle(
-                                              color: Colors.white,
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .tertiary,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),

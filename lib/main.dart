@@ -12,6 +12,10 @@ import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.da
 import 'package:pixelpal/features/app/user_auth/presentation/pages/create_post_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pixelpal/global/common/theme.dart';
+import 'package:pixelpal/global/common/theme_provider.dart';
+import 'package:provider/provider.dart';
+//import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_page.dart'; // Add ScanPage if it's not already added
 import 'services/movie_service.dart';
 
 Future<void> main() async {
@@ -45,9 +49,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'PixelPal',
-      theme: ThemeData(
-        primarySwatch: Colors.yellow,
-      ),
+      theme: Provider.of<ThemeProvider>(context).themeData,
       initialRoute: isLoggedIn ? '/front' : '/login',
       routes: {
         '/splash_screen': (context) => const SplashScreen(),
