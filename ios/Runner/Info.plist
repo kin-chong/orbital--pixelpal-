@@ -68,5 +68,11 @@
         <key>NSAllowsArbitraryLoads</key>
         <true/>
     </dict>
+
+    <!-- Add the following keys for camera and photo library access -->
+    <key>NSCameraUsageDescription</key>
+    <string>We need access to your camera to scan tickets.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to select tickets.</string>
 </dict>
 </plist>
