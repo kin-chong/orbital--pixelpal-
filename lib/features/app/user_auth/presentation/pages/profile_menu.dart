@@ -35,7 +35,7 @@ class ProfileMenu extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data?.data() == null) {
-            return const Center(
+            return Center(
               child: Text(
                 "No data available",
                 style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
@@ -78,7 +78,7 @@ class ProfileMenu extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.person,
                             color: Theme.of(context).colorScheme.tertiary,
                             size: 96,
