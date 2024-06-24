@@ -46,8 +46,8 @@ class ForumPage extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
-                   color: Theme.of(context).colorScheme.primary,
-                   child: ListTile(
+                    color: Theme.of(context).colorScheme.primary,
+                    child: ListTile(
                       leading: CircleAvatar(
                         backgroundColor: Colors.grey,
                         child: Icon(
@@ -87,19 +87,22 @@ class ForumPage extends StatelessWidget {
       bottomNavigationBar: BottomNavBar(
         currentIndex: 2,
         onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/scan');
-              break;
-            case 2:
-              // Stay on the current page
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/profile');
-              break;
+          if (index != 2) {
+            // Avoid navigating to the current page
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, '/front');
+                break;
+              case 1:
+                Navigator.pushNamed(context, '/scan');
+                break;
+              case 2:
+                Navigator.pushNamed(context, '/forum');
+                break;
+              case 3:
+                Navigator.pushNamed(context, '/profile');
+                break;
+            }
           }
         },
       ),
@@ -178,7 +181,8 @@ class ForumDetailPage extends StatelessWidget {
                           .collection('comments')
                           .where('postId', isEqualTo: postId)
                           .snapshots(),
-                      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(
