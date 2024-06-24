@@ -46,8 +46,8 @@ class ForumPage extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
-                    color: Theme.of(context).colorScheme.primary,
-                    child: ListTile(
+                   color: Theme.of(context).colorScheme.primary,
+                   child: ListTile(
                       leading: CircleAvatar(
                         backgroundColor: Colors.grey,
                         child: Icon(
@@ -178,8 +178,7 @@ class ForumDetailPage extends StatelessWidget {
                           .collection('comments')
                           .where('postId', isEqualTo: postId)
                           .snapshots(),
-                      builder:
-                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(

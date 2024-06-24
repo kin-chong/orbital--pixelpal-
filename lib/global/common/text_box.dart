@@ -33,7 +33,7 @@ class MyTextBox extends StatelessWidget {
               ),
               IconButton(
                 onPressed: onPressed,
-                icon: Icon(
+                icon: const Icon(
                   Icons.edit,
                   color: Theme.of(context).colorScheme.tertiary,
                 ),
