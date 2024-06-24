@@ -87,11 +87,18 @@ class ProfileMenu extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                userData['username'],
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                  fontSize: 35,
+                              Container(
+                                width: 200, // Adjust width as needed
+                                child: Text(
+                                  userData['username'],
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.tertiary,
+                                    fontSize: 35,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines:
+                                      1, // Set the maximum number of lines
                                 ),
                               ),
                               Container(

@@ -30,12 +30,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/logo.png
     - assets/images/logo_dark.png
+    - assets/images/logo app light blue background.png
+    - assets/images/logo app transparent background.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -63,3 +66,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: "AppIcon"
+  image_path: "assets/images/logo app light blue background.png"
+  min_sdk_android: 24
+  remove_alpha_ios: true
