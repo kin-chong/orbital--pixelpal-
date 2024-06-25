@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/settings.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/theme_page.dart';
@@ -203,34 +204,7 @@ class ProfileMenu extends StatelessWidget {
           ); */
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        selectedItemColor: Theme.of(context).colorScheme.secondary,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.home),
-            label: 'Home',
-            tooltip: 'Home Page',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.qrcode),
-            label: 'Scan',
-            tooltip: 'Scan Ticket',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.comments),
-            label: 'Forum',
-            tooltip: 'Forum',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.user),
-            label: 'Profile',
-            tooltip: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: BottomNavBar(
         currentIndex: 3,
         onTap: (index) {
           if (index != 3) {
