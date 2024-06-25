@@ -161,39 +161,16 @@ class ProfileMenu extends StatelessWidget {
                       text: 'Placeholder',
                       onTap: () {},
                     ),
+                    MyListTile(
+                      icon: Icons.logout,
+                      text: 'Logout',
+                      textColor: Colors.red,
+                      onTap: () {
+                        FirebaseAuth.instance.signOut();
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                    ),
                   ],
-                ),
-                GestureDetector(
-                  onTap: () {
-                    FirebaseAuth.instance.signOut();
-                    Navigator.pushReplacementNamed(context, '/login');
-                  },
-                  child: Container(
-                    width: 150,
-                    height: 45,
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: const Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            Icons.logout,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            "Logout",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),
