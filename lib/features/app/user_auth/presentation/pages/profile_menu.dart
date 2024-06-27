@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/settings.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/theme_page.dart';
@@ -87,11 +88,18 @@ class ProfileMenu extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                userData['username'],
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                  fontSize: 35,
+                              Container(
+                                width: 200, // Adjust width as needed
+                                child: Text(
+                                  userData['username'],
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.tertiary,
+                                    fontSize: 35,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines:
+                                      1, // Set the maximum number of lines
                                 ),
                               ),
                               Container(
@@ -153,39 +161,16 @@ class ProfileMenu extends StatelessWidget {
                       text: 'Placeholder',
                       onTap: () {},
                     ),
+                    MyListTile(
+                      icon: Icons.logout,
+                      text: 'Logout',
+                      textColor: Colors.red,
+                      onTap: () {
+                        FirebaseAuth.instance.signOut();
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                    ),
                   ],
-                ),
-                GestureDetector(
-                  onTap: () {
-                    FirebaseAuth.instance.signOut();
-                    Navigator.pushReplacementNamed(context, '/login');
-                  },
-                  child: Container(
-                    width: 150,
-                    height: 45,
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: const Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            Icons.logout,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            "Logout",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -196,49 +181,25 @@ class ProfileMenu extends StatelessWidget {
           ); */
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        selectedItemColor: Theme.of(context).colorScheme.secondary,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.home),
-            label: 'Home',
-            tooltip: 'Home Page',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.qrcode),
-            label: 'Scan',
-            tooltip: 'Scan Ticket',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.comments),
-            label: 'Forum',
-            tooltip: 'Forum',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.user),
-            label: 'Profile',
-            tooltip: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: BottomNavBar(
         currentIndex: 3,
         onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/front');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/scan');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/forum');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/profile');
-              break;
+          if (index != 3) {
+            // Avoid navigating to the current page
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, '/front');
+                break;
+              case 1:
+                Navigator.pushNamed(context, '/scan');
+                break;
+              case 2:
+                Navigator.pushNamed(context, '/forum');
+                break;
+              case 3:
+                Navigator.pushNamed(context, '/profile');
+                break;
+            }
           }
         },
       ),

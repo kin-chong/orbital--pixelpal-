@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/widgets/form_container_widget.dart';
 import 'package:pixelpal/global/common/toast.dart';
 
@@ -27,6 +28,64 @@ class _LoginPageState extends State<LoginPage> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveLoginState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
+  }
+
+  Future<void> _signIn() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+
+    User? user = await _auth.signInWithEmailAndPassword(email, password);
+
+    if (user != null) {
+      await _saveLoginState();
+      showToast(message: "Account has been successfully signed in");
+      Navigator.pushNamed(context, "/front");
+    } else {
+      showToast(message: "Login failed. Please check your credentials.");
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      clientId: '374638859313-tij5p6jbstktbm7ugt5ae89b75koqid1.apps.googleusercontent.com',
+    );
+
+    try {
+      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      String? email = googleSignInAccount?.email;
+
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          idToken: googleSignInAuthentication.idToken,
+          accessToken: googleSignInAuthentication.accessToken,
+        );
+
+        await _firebaseAuth.signInWithCredential(credential);
+
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(email)
+            .get();
+
+        if (!userDoc.exists) {
+          FirebaseFirestore.instance
+              .collection("Users")
+              .doc(email)
+              .set({'username': email, 'bio': 'Empty bio...'});
+        }
+
+        await _saveLoginState();
+        Navigator.pushNamed(context, "/front");
+      }
+    } catch (e) {
+      showToast(message: "Some error occurred: $e");
+    }
   }
 
   @override
@@ -177,61 +236,5 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  void _signIn() async {
-    String email = _emailController.text;
-    String password = _passwordController.text;
-
-    User? user = await _auth.signInWithEmailAndPassword(email, password);
-
-    if (user != null) {
-      showToast(message: "Account has been successfully signed in");
-      Navigator.pushNamed(context, "/front");
-    } else {
-      //showToast(message: "Some error happened");
-    }
-  }
-
-  _signInWithGoogle() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId:
-          '374638859313-tij5p6jbstktbm7ugt5ae89b75koqid1.apps.googleusercontent.com',
-    );
-
-    try {
-      final GoogleSignInAccount? googleSignInAccount =
-          await googleSignIn.signIn();
-      //print(googleSignInAccount?.email);
-      String? email = googleSignInAccount?.email;
-      if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication =
-            await googleSignInAccount.authentication;
-        final AuthCredential credential = GoogleAuthProvider.credential(
-            idToken: googleSignInAuthentication.idToken,
-            accessToken: googleSignInAuthentication.accessToken);
-
-        await _firebaseAuth.signInWithCredential(credential);
-
-        /* print(googleSignInAccount.photoUrl);
-        print(googleSignInAccount.email); */
-
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection("Users")
-            .doc(email)
-            .get();
-
-        if (!userDoc.exists) {
-          FirebaseFirestore.instance
-              .collection("Users")
-              .doc(email)
-              .set({'username': email, 'bio': 'Empty bio...'});
-        }
-
-        Navigator.pushNamed(context, "/front");
-      }
-    } catch (e) {
-      showToast(message: "Some error occurred $e");
-    }
   }
 }

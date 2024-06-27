@@ -9,10 +9,12 @@ import 'package:pixelpal/features/app/user_auth/presentation/pages/forgot_passwo
 import 'package:pixelpal/features/app/user_auth/presentation/pages/email_sent_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/sign_up_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/create_post_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pixelpal/global/common/theme.dart';
 import 'package:pixelpal/global/common/theme_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:pixelpal/features/app/user_auth/presentation/pages/create_post_page.dart'; // Add CreatePostPage
 //import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_page.dart'; // Add ScanPage if it's not already added
 import 'services/movie_service.dart';
 
@@ -30,16 +32,24 @@ Future<void> main() async {
   } else {
     await Firebase.initializeApp();
   }
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
-      child: const MyApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: MyApp(isLoggedIn: isLoggedIn),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+
+  const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +57,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'PixelPal',
       theme: Provider.of<ThemeProvider>(context).themeData,
-      initialRoute: '/login',
+      initialRoute: isLoggedIn ? '/front' : '/login',
       routes: {
         '/splash_screen': (context) => const SplashScreen(),
         '/login': (context) => const LoginPage(),
@@ -58,9 +68,9 @@ class MyApp extends StatelessWidget {
         '/upcoming_movies': (context) => const UpcomingMoviesScreen(),
         '/forum': (context) => const ForumPage(),
         '/profile': (context) => ProfileMenu(),
-        '/home': (context) => const FrontPage(), // Ensure this route is added
-        //'/scan': (context) => const ScanPage(), // Ensure ScanPage is added
-        '/createPost': (context) => const CreatePostPage(), // Ensure CreatePostPage is added
+        '/home': (context) => const FrontPage(),
+        '/scan': (context) => ScanPage(),
+        '/createPost': (context) => const CreatePostPage(),
       },
     );
   }
