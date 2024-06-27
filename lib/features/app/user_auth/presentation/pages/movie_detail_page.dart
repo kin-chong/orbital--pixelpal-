@@ -59,7 +59,11 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             final actors = movie['credits']['cast'];
             final trailers = movie['videos']['results'];
             final genres = movie['genres'];
-            final platforms = ['Netflix', 'Amazon Prime', 'Disney+']; // Example platforms
+            final platforms = [
+              'Netflix',
+              'Amazon Prime',
+              'Disney+'
+            ]; // Example platforms
 
             if (trailers.isNotEmpty) {
               final trailerKey = trailers[0]['key'];
@@ -79,14 +83,16 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AspectRatio(
-                      aspectRatio: 2 / 3, // Adjust the aspect ratio based on the poster's typical aspect ratio
+                      aspectRatio: 2 /
+                          3, // Adjust the aspect ratio based on the poster's typical aspect ratio
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           image: DecorationImage(
                             image: NetworkImage(
                                 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'),
-                            fit: BoxFit.contain, // Ensure the full poster is displayed
+                            fit: BoxFit
+                                .contain, // Ensure the full poster is displayed
                           ),
                         ),
                       ),
@@ -164,7 +170,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       YoutubePlayer(
                         controller: _youtubePlayerController!,
                         showVideoProgressIndicator: true,
-                        progressIndicatorColor: Colors.amber,
+                        progressIndicatorColor: Colors.brown,
                         onReady: () {
                           _youtubePlayerController!.addListener(() {});
                         },
