@@ -36,4 +36,19 @@ class MovieService {
       throw Exception('Failed to load movie details');
     }
   }
+
+  Future<List<dynamic>> fetchMoviesByIds(List<int> movieIds) async {
+    List<dynamic> movies = [];
+    for (int id in movieIds) {
+      final response = await http.get(Uri.parse(
+          'https://api.themoviedb.org/3/movie/$id?api_key=$_apiKey&language=en-US'));
+
+      if (response.statusCode == 200) {
+        movies.add(json.decode(response.body));
+      } else {
+        throw Exception('Failed to load movie with id $id');
+      }
+    }
+    return movies;
+  }
 }

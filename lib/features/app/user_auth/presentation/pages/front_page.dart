@@ -16,6 +16,7 @@ class _FrontPageState extends State<FrontPage>
 
   Future<List<dynamic>>? _upcomingMovies;
   Future<List<dynamic>>? _currentlyShowingMovies;
+  Set<int> _favoriteMovieIds = {};
 
   @override
   void initState() {
@@ -64,31 +65,26 @@ class _FrontPageState extends State<FrontPage>
           children: [
             _buildUpcomingMoviesList(),
             _buildPopularMoviesList(),
-            Center(
-                child: Text('Favorite Movies',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.tertiary))),
+            _buildFavoriteMoviesList(),
           ],
         ),
         bottomNavigationBar: BottomNavBar(
           currentIndex: 0,
           onTap: (index) {
-            if (index != 0) {
-              // Avoid navigating to the current page
-              switch (index) {
-                case 0:
-                  Navigator.pushNamed(context, '/front');
-                  break;
-                case 1:
-                  Navigator.pushNamed(context, '/scan');
-                  break;
-                case 2:
-                  Navigator.pushNamed(context, '/forum');
-                  break;
-                case 3:
-                  Navigator.pushNamed(context, '/profile');
-                  break;
-              }
+            // Navigate to the appropriate page
+            switch (index) {
+              case 0:
+                Navigator.pushReplacementNamed(context, '/front');
+                break;
+              case 1:
+                Navigator.pushReplacementNamed(context, '/scan');
+                break;
+              case 2:
+                Navigator.pushReplacementNamed(context, '/forum');
+                break;
+              case 3:
+                Navigator.pushReplacementNamed(context, '/profile');
+                break;
             }
           },
         ),
@@ -117,13 +113,29 @@ class _FrontPageState extends State<FrontPage>
               itemCount: snapshot.data?.length ?? 0,
               itemBuilder: (context, index) {
                 var movie = snapshot.data![index];
+                String? posterPath = movie['poster_path'];
+                String imageUrl = posterPath != null
+                    ? 'https://image.tmdb.org/t/p/w500$posterPath'
+                    : 'https://via.placeholder.com/500'; // A placeholder image URL
+
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            MovieDetailPage(movieId: movie['id']),
+                        builder: (context) => MovieDetailPage(
+                          movieId: movie['id'],
+                          isFavorite: _favoriteMovieIds.contains(movie['id']),
+                          onFavoriteChanged: (isFavorite) {
+                            setState(() {
+                              if (isFavorite) {
+                                _favoriteMovieIds.add(movie['id']);
+                              } else {
+                                _favoriteMovieIds.remove(movie['id']);
+                              }
+                            });
+                          },
+                        ),
                       ),
                     );
                   },
@@ -135,8 +147,7 @@ class _FrontPageState extends State<FrontPage>
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
                             image: DecorationImage(
-                              image: NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500${movie['poster_path']}'),
+                              image: NetworkImage(imageUrl),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -212,13 +223,29 @@ class _FrontPageState extends State<FrontPage>
             itemCount: snapshot.data?.length ?? 0,
             itemBuilder: (context, index) {
               var movie = snapshot.data![index];
+              String? posterPath = movie['poster_path'];
+              String imageUrl = posterPath != null
+                  ? 'https://image.tmdb.org/t/p/w500$posterPath'
+                  : 'https://via.placeholder.com/500'; // A placeholder image URL
+
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          MovieDetailPage(movieId: movie['id']),
+                      builder: (context) => MovieDetailPage(
+                        movieId: movie['id'],
+                        isFavorite: _favoriteMovieIds.contains(movie['id']),
+                        onFavoriteChanged: (isFavorite) {
+                          setState(() {
+                            if (isFavorite) {
+                              _favoriteMovieIds.add(movie['id']);
+                            } else {
+                              _favoriteMovieIds.remove(movie['id']);
+                            }
+                          });
+                        },
+                      ),
                     ),
                   );
                 },
@@ -230,8 +257,125 @@ class _FrontPageState extends State<FrontPage>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           image: DecorationImage(
-                            image: NetworkImage(
-                                'https://image.tmdb.org/t/p/w500${movie['poster_path']}'),
+                            image: NetworkImage(imageUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(15),
+                              bottomRight: Radius.circular(15),
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                movie['title'],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Release Date: ${movie['release_date']}',
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildFavoriteMoviesList() {
+    if (_favoriteMovieIds.isEmpty) {
+      return Center(
+        child: Text(
+          'No favorite movies',
+          style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+        ),
+      );
+    }
+
+    return FutureBuilder<List<dynamic>>(
+      future: _movieService.fetchMoviesByIds(_favoriteMovieIds.toList()),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(
+              child: Text('Error: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.white)));
+        } else {
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1,
+            ),
+            itemCount: snapshot.data?.length ?? 0,
+            itemBuilder: (context, index) {
+              var movie = snapshot.data![index];
+              String? posterPath = movie['poster_path'];
+              String imageUrl = posterPath != null
+                  ? 'https://image.tmdb.org/t/p/w500$posterPath'
+                  : 'https://via.placeholder.com/500'; // A placeholder image URL
+
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MovieDetailPage(
+                        movieId: movie['id'],
+                        isFavorite: _favoriteMovieIds.contains(movie['id']),
+                        onFavoriteChanged: (isFavorite) {
+                          setState(() {
+                            if (isFavorite) {
+                              _favoriteMovieIds.add(movie['id']);
+                            } else {
+                              _favoriteMovieIds.remove(movie['id']);
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          image: DecorationImage(
+                            image: NetworkImage(imageUrl),
                             fit: BoxFit.cover,
                           ),
                         ),

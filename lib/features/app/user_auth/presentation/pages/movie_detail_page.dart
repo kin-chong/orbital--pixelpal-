@@ -4,8 +4,15 @@ import '../../../../../services/movie_service.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final int movieId;
+  final bool isFavorite;
+  final ValueChanged<bool> onFavoriteChanged;
 
-  const MovieDetailPage({super.key, required this.movieId});
+  const MovieDetailPage({
+    super.key,
+    required this.movieId,
+    required this.isFavorite,
+    required this.onFavoriteChanged,
+  });
 
   @override
   _MovieDetailPageState createState() => _MovieDetailPageState();
@@ -15,17 +22,26 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   final MovieService _movieService = MovieService();
   Future<Map<String, dynamic>>? _movieDetails;
   YoutubePlayerController? _youtubePlayerController;
+  bool _isFavorite = false;
 
   @override
   void initState() {
     super.initState();
     _movieDetails = _movieService.fetchMovieDetails(widget.movieId);
+    _isFavorite = widget.isFavorite;
   }
 
   @override
   void dispose() {
     _youtubePlayerController?.dispose();
     super.dispose();
+  }
+
+  void _toggleFavorite() {
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+    widget.onFavoriteChanged(_isFavorite);
   }
 
   @override
@@ -43,6 +59,15 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   .tertiary), // Make the back button yellow
           onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+            onPressed: _toggleFavorite,
+          ),
+        ],
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _movieDetails,
@@ -83,16 +108,17 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AspectRatio(
-                      aspectRatio: 2 /
-                          3, // Adjust the aspect ratio based on the poster's typical aspect ratio
+                      aspectRatio: 2 / 3, // Adjust the aspect ratio based on the poster's typical aspect ratio
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           image: DecorationImage(
                             image: NetworkImage(
-                                'https://image.tmdb.org/t/p/w500${movie['poster_path']}'),
-                            fit: BoxFit
-                                .contain, // Ensure the full poster is displayed
+                              movie['poster_path'] != null
+                                  ? 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'
+                                  : 'https://via.placeholder.com/500', // A placeholder image URL
+                            ),
+                            fit: BoxFit.contain, // Ensure the full poster is displayed
                           ),
                         ),
                       ),

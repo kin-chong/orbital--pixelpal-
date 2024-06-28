@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'bottom_nav_bar.dart'; // Correct import path
@@ -15,9 +16,9 @@ class ScanPage extends StatefulWidget {
 class _ScanPageState extends State<ScanPage> {
   File? _image;
   String _scannedText = "";
-  String? _movieName;
-  String? _date;
-  String? _ticketPrice;
+  TextEditingController _movieNameController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _ticketPriceController = TextEditingController();
 
   Future<void> _getImageAndScan() async {
     final picker = ImagePicker();
@@ -30,15 +31,21 @@ class _ScanPageState extends State<ScanPage> {
       });
 
       final inputImage = InputImage.fromFile(imageFile);
-      final textDetector = GoogleMlKit.vision.textRecognizer();
-      final RecognizedText visionText = await textDetector.processImage(inputImage);
+      final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
+      final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
 
-      String scannedText = visionText.text;
+      String scannedText = recognizedText.text;
+      print('Scanned Text: $scannedText'); // Debug log
       setState(() {
         _scannedText = scannedText;
       });
 
       _extractTicketDetails(scannedText);
+    } else {
+      print('No image selected.'); // Debug log
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No image selected.')),
+      );
     }
   }
 
@@ -52,10 +59,12 @@ class _ScanPageState extends State<ScanPage> {
     String? date = datePattern.firstMatch(scannedText)?.group(1)?.trim();
     String? ticketPrice = pricePattern.firstMatch(scannedText)?.group(1)?.trim();
 
+    print('Extracted Details - Movie: $movieName, Date: $date, Price: $ticketPrice'); // Debug log
+
     setState(() {
-      _movieName = movieName;
-      _date = date;
-      _ticketPrice = ticketPrice;
+      _movieNameController.text = movieName ?? '';
+      _dateController.text = date ?? '';
+      _ticketPriceController.text = ticketPrice ?? '';
     });
 
     _showConfirmationDialog();
@@ -67,15 +76,29 @@ class _ScanPageState extends State<ScanPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirm Ticket Details'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _image != null ? Image.file(_image!) : Container(),
-              const SizedBox(height: 10),
-              Text('Movie: $_movieName'),
-              Text('Date: $_date'),
-              Text('Price: \$$_ticketPrice'),
-            ],
+          content: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _image != null ? Image.file(_image!) : Container(),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _movieNameController,
+                    decoration: InputDecoration(labelText: 'Movie Name'),
+                  ),
+                  TextFormField(
+                    controller: _dateController,
+                    decoration: InputDecoration(labelText: 'Date'),
+                  ),
+                  TextFormField(
+                    controller: _ticketPriceController,
+                    decoration: InputDecoration(labelText: 'Price'),
+                  ),
+                ],
+              ),
+            ),
           ),
           actions: [
             TextButton(
@@ -99,20 +122,66 @@ class _ScanPageState extends State<ScanPage> {
   }
 
   Future<void> _saveTicketDetails() async {
-    if (_movieName != null && _date != null && _ticketPrice != null) {
-      CollectionReference tickets = FirebaseFirestore.instance.collection('tickets');
-      await tickets.add({
-        'movie_name': _movieName,
-        'date': _date,
-        'ticket_price': _ticketPrice,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-      print('Ticket saved: $_movieName, $_date, $_ticketPrice');
-      // Show a success message or navigate to another screen
+    if (_image != null &&
+        _movieNameController.text.isNotEmpty &&
+        _dateController.text.isNotEmpty &&
+        _ticketPriceController.text.isNotEmpty) {
+      try {
+        // Upload the image to Firebase Storage
+        String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+        Reference storageReference = FirebaseStorage.instance.ref().child('tickets/$fileName');
+        UploadTask uploadTask = storageReference.putFile(_image!);
+
+        // Add error handling for upload task
+        uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+          print('Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
+        }, onError: (e) {
+          print('Error during upload: $e'); // Debug log
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error during upload: $e')),
+          );
+        });
+
+        TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => {});
+        String imageUrl = await taskSnapshot.ref.getDownloadURL();
+        print('Image URL: $imageUrl'); // Debug log
+
+        // Save the ticket details to Firestore
+        CollectionReference tickets = FirebaseFirestore.instance.collection('tickets');
+        await tickets.add({
+          'movie_name': _movieNameController.text,
+          'date': _dateController.text,
+          'ticket_price': _ticketPriceController.text,
+          'image_url': imageUrl,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+        print('Ticket saved: ${_movieNameController.text}, ${_dateController.text}, ${_ticketPriceController.text}, $imageUrl'); // Debug log
+
+        // Show a success message or navigate to another screen
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ticket saved successfully!')),
+        );
+      } catch (e) {
+        print('Error saving ticket: $e'); // Debug log
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error saving ticket: $e')),
+        );
+      }
+    } else {
+      print('Failed to save ticket. Missing details.');
+      print('Image: $_image, Movie: ${_movieNameController.text}, Date: ${_dateController.text}, Price: ${_ticketPriceController.text}'); // Debug log
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ticket saved successfully!')),
+        const SnackBar(content: Text('Failed to save ticket. Missing details.')),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _movieNameController.dispose();
+    _dateController.dispose();
+    _ticketPriceController.dispose();
+    super.dispose();
   }
 
   @override
@@ -138,17 +207,46 @@ class _ScanPageState extends State<ScanPage> {
           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(child: Text('No tickets found.'));
           } else {
-            return ListView.builder(
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10.0,
+                mainAxisSpacing: 10.0,
+              ),
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 var ticket = snapshot.data!.docs[index];
-                return ListTile(
-                  title: Text(ticket['movie_name']),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                var data = ticket.data() as Map<String, dynamic>;
+                return GridTile(
+                  child: Column(
                     children: [
-                      Text('Date: ${ticket['date']}'),
-                      Text('Price: \$${ticket['ticket_price']}'),
+                      Expanded(
+                        child: data['image_url'] != null
+                            ? Image.network(
+                                data['image_url'],
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) => Container(
+                                  color: Colors.grey,
+                                  child: Center(child: Icon(Icons.broken_image)),
+                                ),
+                              )
+                            : Container(color: Colors.grey),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              data['movie_name'] ?? 'Unknown',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text('Date: ${data['date'] ?? 'Unknown'}'),
+                            Text('Price: \$${data['ticket_price'] ?? 'Unknown'}'),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -160,22 +258,31 @@ class _ScanPageState extends State<ScanPage> {
       bottomNavigationBar: BottomNavBar(
         currentIndex: 1, // Set the current index to the Scan page
         onTap: (index) {
-          if (index != 1) {
-            // Avoid navigating to the current page
-            switch (index) {
-              case 0:
-                Navigator.pushNamed(context, '/front');
-                break;
-              case 1:
-                Navigator.pushNamed(context, '/scan');
-                break;
-              case 2:
-                Navigator.pushNamed(context, '/forum');
-                break;
-              case 3:
-                Navigator.pushNamed(context, '/profile');
-                break;
-            }
+          // Get the current route name
+          String? currentRoute = ModalRoute.of(context)?.settings.name;
+
+          // Define target route based on the index
+          String targetRoute;
+          switch (index) {
+            case 0:
+              targetRoute = '/front';
+              break;
+            case 1:
+              targetRoute = '/scan';
+              break;
+            case 2:
+              targetRoute = '/forum';
+              break;
+            case 3:
+              targetRoute = '/profile';
+              break;
+            default:
+              return;
+          }
+
+          // Navigate to the target route only if it's different from the current route
+          if (currentRoute != targetRoute) {
+            Navigator.pushReplacementNamed(context, targetRoute);
           }
         },
       ),
