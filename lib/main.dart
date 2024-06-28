@@ -12,7 +12,6 @@ import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.da
 import 'package:pixelpal/features/app/user_auth/presentation/pages/create_post_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pixelpal/global/common/theme.dart';
 import 'package:pixelpal/global/common/theme_provider.dart';
 import 'package:provider/provider.dart';
 //import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_page.dart'; // Add ScanPage if it's not already added
@@ -69,7 +68,7 @@ class MyApp extends StatelessWidget {
         '/forum': (context) => const ForumPage(),
         '/profile': (context) => ProfileMenu(),
         '/home': (context) => const FrontPage(),
-        '/scan': (context) => ScanPage(),
+        '/scan': (context) => const ScanPage(),
         '/createPost': (context) => const CreatePostPage(),
       },
     );

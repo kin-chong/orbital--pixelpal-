@@ -5,7 +5,7 @@ ThemeData lightMode = ThemeData(
   colorScheme: ColorScheme.light(
     surface: Colors.grey.shade200,
     primary: Colors.grey.shade300,
-    secondary: Color.fromARGB(255, 52, 75, 86),
+    secondary: const Color.fromARGB(255, 52, 75, 86),
     tertiary: Colors.black,
     onPrimary: Colors.black,
     onPrimaryContainer: Colors.grey.shade700,
@@ -18,7 +18,7 @@ ThemeData darkMode = ThemeData(
   colorScheme: ColorScheme.dark(
     surface: Colors.black,
     primary: Colors.grey.shade800,
-    secondary: Color.fromARGB(255, 169, 192, 203),
+    secondary: const Color.fromARGB(255, 169, 192, 203),
     tertiary: Colors.white,
     onPrimary: Colors.white,
     onPrimaryContainer: Colors.grey.shade300,

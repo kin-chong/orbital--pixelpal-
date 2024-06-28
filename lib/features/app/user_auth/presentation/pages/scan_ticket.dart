@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class ScanPage extends StatefulWidget {
+  const ScanPage({super.key});
+
   @override
   _ScanPageState createState() => _ScanPageState();
 }
@@ -63,12 +65,12 @@ class _ScanPageState extends State<ScanPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Ticket Details'),
+          title: const Text('Confirm Ticket Details'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               _image != null ? Image.file(_image!) : Container(),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text('Movie: $_movieName'),
               Text('Date: $_date'),
               Text('Price: \$$_ticketPrice'),
@@ -79,7 +81,7 @@ class _ScanPageState extends State<ScanPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -87,7 +89,7 @@ class _ScanPageState extends State<ScanPage> {
                 _saveTicketDetails();
                 Navigator.of(context).pop();
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -107,7 +109,7 @@ class _ScanPageState extends State<ScanPage> {
       print('Ticket saved: $_movieName, $_date, $_ticketPrice');
       // Show a success message or navigate to another screen
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ticket saved successfully!')),
+        const SnackBar(content: Text('Ticket saved successfully!')),
       );
     }
   }
@@ -116,25 +118,25 @@ class _ScanPageState extends State<ScanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Scan Movie Ticket'),
+        title: const Text('Scan Movie Ticket'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           _image != null
               ? Image.file(_image!)
-              : Text('No image selected.'),
-          SizedBox(height: 16.0),
+              : const Text('No image selected.'),
+          const SizedBox(height: 16.0),
           _image != null
               ? Text(
                   'Scanned Text: $_scannedText',
                   textAlign: TextAlign.center,
                 )
               : Container(),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: _getImageAndScan,
-            child: Text('Scan Ticket'),
+            child: const Text('Scan Ticket'),
           ),
         ],
       ),

@@ -24,7 +24,7 @@ class EmailSentPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
                     'Email Sent!',
                     style: TextStyle(

@@ -93,11 +93,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _createPost,
-                child: const Text('Create Post'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.yellow,
                   foregroundColor: Colors.black,
                 ),
+                child: const Text('Create Post'),
               ),
             ],
           ),

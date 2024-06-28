@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/settings.dart';
@@ -88,7 +87,7 @@ class ProfileMenu extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
+                              SizedBox(
                                 width: 200, // Adjust width as needed
                                 child: Text(
                                   userData['username'],
@@ -102,7 +101,7 @@ class ProfileMenu extends StatelessWidget {
                                       1, // Set the maximum number of lines
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: 200, // Adjust width as needed
                                 child: Text(
                                   userData['bio'],

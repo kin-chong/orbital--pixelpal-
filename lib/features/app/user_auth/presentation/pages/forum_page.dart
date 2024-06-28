@@ -48,7 +48,7 @@ class ForumPage extends StatelessWidget {
                   child: Card(
                     color: Theme.of(context).colorScheme.primary,
                     child: ListTile(
-                      leading: CircleAvatar(
+                      leading: const CircleAvatar(
                         backgroundColor: Colors.grey,
                         child: Icon(
                           FontAwesomeIcons.user,

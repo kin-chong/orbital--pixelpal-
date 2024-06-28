@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/movie_detail_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
-import 'package:pixelpal/features/app/user_auth/presentation/pages/no_animation_page_route.dart';
 import 'package:pixelpal/services/movie_service.dart';
 
 class FrontPage extends StatefulWidget {
@@ -53,7 +51,7 @@ class _FrontPageState extends State<FrontPage>
                 indicatorColor: Colors.pinkAccent,
                 labelColor: Theme.of(context).colorScheme.tertiary,
                 unselectedLabelColor: Theme.of(context).colorScheme.tertiary,
-                tabs: [
+                tabs: const [
                   Tab(text: 'Upcoming'),
                   Tab(text: 'Popular'),
                   Tab(text: 'Favorites'),

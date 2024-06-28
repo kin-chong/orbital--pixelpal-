@@ -19,15 +19,15 @@ class _ThemePageState extends State<ThemePage> {
       body: ListView(
         children: [
           ListTile(
-            title: Text('Light Mode'),
-            leading: Icon(Icons.wb_sunny),
+            title: const Text('Light Mode'),
+            leading: const Icon(Icons.wb_sunny),
             onTap: () {
               Provider.of<ThemeProvider>(context, listen: false).setLightMode();
             },
           ),
           ListTile(
-            title: Text('Dark Mode'),
-            leading: Icon(Icons.nights_stay),
+            title: const Text('Dark Mode'),
+            leading: const Icon(Icons.nights_stay),
             onTap: () {
               Provider.of<ThemeProvider>(context, listen: false).setDarkMode();
             },
