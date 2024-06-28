@@ -146,18 +146,13 @@ class ProfileMenu extends StatelessWidget {
                       },
                     ),
                     MyListTile(
-                      icon: Icons.abc_rounded,
-                      text: 'Placeholder',
+                      icon: Icons.local_movies,
+                      text: 'Saved Movies',
                       onTap: () {},
                     ),
                     MyListTile(
-                      icon: Icons.abc_rounded,
-                      text: 'Placeholder',
-                      onTap: () {},
-                    ),
-                    MyListTile(
-                      icon: Icons.abc_rounded,
-                      text: 'Placeholder',
+                      icon: Icons.confirmation_number,
+                      text: 'Saved Tickets',
                       onTap: () {},
                     ),
                     MyListTile(
