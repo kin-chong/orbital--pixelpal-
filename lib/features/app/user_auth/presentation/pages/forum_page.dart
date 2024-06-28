@@ -2,15 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'bottom_nav_bar.dart'; // Correct import path
+import 'no_animation_page_route.dart'; // Correct import path
 
 class ForumPage extends StatelessWidget {
   const ForumPage({super.key});
+
+  // Method to get the appropriate emoji based on recommendation level
+  String getRecommendationEmoji(String recommendation) {
+    switch (recommendation) {
+      case 'Highly recommend':
+        return '😊'; // Smiling face with smiling eyes
+      case 'Recommend':
+        return '🙂'; // Slightly smiling face
+      case 'Neutral':
+        return '😐'; // Neutral face
+      case 'Don\'t recommend':
+        return '🙁'; // Slightly frowning face
+      case 'Very disappointed':
+        return '😞'; // Disappointed face
+      default:
+        return '😐'; // Neutral face for undefined values
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(
           'Forum',
@@ -18,8 +38,7 @@ class ForumPage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon:
-                Icon(Icons.add, color: Theme.of(context).colorScheme.tertiary),
+            icon: Icon(Icons.add, color: Theme.of(context).colorScheme.tertiary),
             onPressed: () {
               Navigator.pushNamed(context, '/createPost');
             },
@@ -43,36 +62,30 @@ class ForumPage extends StatelessWidget {
               itemCount: snapshot.data?.docs.length ?? 0,
               itemBuilder: (context, index) {
                 var post = snapshot.data!.docs[index];
+                String recommendationEmoji = getRecommendationEmoji(post['recommendation']);
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
                     color: Theme.of(context).colorScheme.primary,
                     child: ListTile(
-                      leading: const CircleAvatar(
+                      leading: CircleAvatar(
                         backgroundColor: Colors.grey,
-                        child: Icon(
-                          FontAwesomeIcons.user,
-                          color: Colors.white,
+                        child: Text(
+                          recommendationEmoji,
+                          style: TextStyle(fontSize: 24),
                         ),
                       ),
                       title: Text(
                         post['title'],
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary),
-                      ),
-                      subtitle: Text(
-                        post['description'],
-                        style: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onPrimaryContainer),
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
                       ),
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ForumDetailPage(postId: post.id),
+                          NoAnimationPageRoute(
+                            page: ForumDetailPage(postId: post.id),
                           ),
                         );
                       },
@@ -110,10 +123,30 @@ class ForumPage extends StatelessWidget {
   }
 }
 
-class ForumDetailPage extends StatelessWidget {
+class ForumDetailPage extends StatefulWidget {
   final String postId;
 
   const ForumDetailPage({super.key, required this.postId});
+
+  @override
+  _ForumDetailPageState createState() => _ForumDetailPageState();
+}
+
+class _ForumDetailPageState extends State<ForumDetailPage> {
+  final TextEditingController _commentController = TextEditingController();
+
+  Future<void> _addComment() async {
+    if (_commentController.text.isNotEmpty) {
+      await FirebaseFirestore.instance.collection('comments').add({
+        'postId': widget.postId,
+        'userId': 'Anonymous', // Replace with actual user ID
+        'text': _commentController.text,
+        'createdAt': Timestamp.now(),
+      });
+
+      _commentController.clear();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,8 +160,7 @@ class ForumDetailPage extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future:
-            FirebaseFirestore.instance.collection('posts').doc(postId).get(),
+        future: FirebaseFirestore.instance.collection('posts').doc(widget.postId).get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -136,122 +168,138 @@ class ForumDetailPage extends StatelessWidget {
             return Center(
               child: Text(
                 'Error: ${snapshot.error}',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
             );
           } else if (!snapshot.hasData || !snapshot.data!.exists) {
             return Center(
               child: Text(
                 'Post not found',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
             );
           } else {
             var post = snapshot.data!;
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    post['title'],
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontSize: 24),
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        post['title'],
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontSize: 24),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        post['bodyText'],
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.tertiary),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Comments:',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontSize: 18),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    post['description'],
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.tertiary),
+                ),
+                Expanded(
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('comments')
+                        .where('postId', isEqualTo: widget.postId)
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            'Error: ${snapshot.error}',
+                            style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                          ),
+                        );
+                      } else {
+                        return ListView.builder(
+                          itemCount: snapshot.data?.docs.length ?? 0,
+                          itemBuilder: (context, index) {
+                            var comment = snapshot.data!.docs[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: Colors.grey,
+                                    child: Icon(
+                                      FontAwesomeIcons.user,
+                                      color: Theme.of(context).colorScheme.tertiary,
+                                      size: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          comment['userId'],
+                                          style: TextStyle(
+                                            color: Theme.of(context).colorScheme.tertiary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          comment['text'],
+                                          style: const TextStyle(color: Colors.white70),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }
+                    },
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Comments:',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontSize: 18),
-                  ),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('comments')
-                          .where('postId', isEqualTo: postId)
-                          .snapshots(),
-                      builder:
-                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                              'Error: ${snapshot.error}',
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.tertiary),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _commentController,
+                          style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                          decoration: InputDecoration(
+                            hintText: 'Add a comment...',
+                            hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
                             ),
-                          );
-                        } else {
-                          return ListView.builder(
-                            itemCount: snapshot.data?.docs.length ?? 0,
-                            itemBuilder: (context, index) {
-                              var comment = snapshot.data!.docs[index];
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundColor: Colors.grey,
-                                      child: Icon(
-                                        FontAwesomeIcons.user,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .tertiary,
-                                        size: 16,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            comment['userId'],
-                                            style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .tertiary,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            comment['text'],
-                                            style: const TextStyle(
-                                                color: Colors.white70),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      },
-                    ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                            ),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.send, color: Theme.of(context).colorScheme.tertiary),
+                        onPressed: _addComment,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           }
         },
@@ -276,5 +324,11 @@ class ForumDetailPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
   }
 }

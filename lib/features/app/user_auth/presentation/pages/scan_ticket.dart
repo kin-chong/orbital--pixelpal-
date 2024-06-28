@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'bottom_nav_bar.dart'; // Correct import path
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -118,27 +119,65 @@ class _ScanPageState extends State<ScanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Scan Movie Ticket'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          _image != null
-              ? Image.file(_image!)
-              : const Text('No image selected.'),
-          const SizedBox(height: 16.0),
-          _image != null
-              ? Text(
-                  'Scanned Text: $_scannedText',
-                  textAlign: TextAlign.center,
-                )
-              : Container(),
-          const SizedBox(height: 16.0),
-          ElevatedButton(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.camera_alt),
             onPressed: _getImageAndScan,
-            child: const Text('Scan Ticket'),
           ),
         ],
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('tickets').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No tickets found.'));
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                var ticket = snapshot.data!.docs[index];
+                return ListTile(
+                  title: Text(ticket['movie_name']),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Date: ${ticket['date']}'),
+                      Text('Price: \$${ticket['ticket_price']}'),
+                    ],
+                  ),
+                );
+              },
+            );
+          }
+        },
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: 1, // Set the current index to the Scan page
+        onTap: (index) {
+          if (index != 1) {
+            // Avoid navigating to the current page
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, '/front');
+                break;
+              case 1:
+                Navigator.pushNamed(context, '/scan');
+                break;
+              case 2:
+                Navigator.pushNamed(context, '/forum');
+                break;
+              case 3:
+                Navigator.pushNamed(context, '/profile');
+                break;
+            }
+          }
+        },
       ),
     );
   }
