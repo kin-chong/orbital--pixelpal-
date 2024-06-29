@@ -14,6 +14,12 @@ class ProfileMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (user == null) {
+      return Scaffold(
+        body: Center(child: Text('User not authenticated')),
+      );
+    }
+
     bool isLightTheme = Theme.of(context).brightness == Brightness.light;
 
     return Scaffold(
@@ -21,12 +27,12 @@ class ProfileMenu extends StatelessWidget {
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")
-            .doc(user?.email)
+            .doc(user?.uid)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
-              child: Text('Error${snapshot.error}'),
+              child: Text('Error: ${snapshot.error}'),
             );
           }
 
@@ -56,14 +62,12 @@ class ProfileMenu extends StatelessWidget {
                   children: [
                     const SizedBox(height: 40),
                     Padding(
-                      padding: const EdgeInsets.only(
-                          top: 10,
-                          left: 25.0), // Adjust the left padding as needed
+                      padding: const EdgeInsets.only(top: 10, left: 25.0),
                       child: Image.asset(
                         isLightTheme
                             ? 'assets/images/logo_dark.png'
                             : 'assets/images/logo.png',
-                        width: 200, // Adjust the width as needed
+                        width: 200,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -88,7 +92,7 @@ class ProfileMenu extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                width: 200, // Adjust width as needed
+                                width: 200,
                                 child: Text(
                                   userData['username'],
                                   style: TextStyle(
@@ -97,12 +101,11 @@ class ProfileMenu extends StatelessWidget {
                                     fontSize: 35,
                                   ),
                                   overflow: TextOverflow.ellipsis,
-                                  maxLines:
-                                      1, // Set the maximum number of lines
+                                  maxLines: 1,
                                 ),
                               ),
                               SizedBox(
-                                width: 200, // Adjust width as needed
+                                width: 200,
                                 child: Text(
                                   userData['bio'],
                                   style: TextStyle(
@@ -111,8 +114,7 @@ class ProfileMenu extends StatelessWidget {
                                     fontSize: 15,
                                   ),
                                   overflow: TextOverflow.ellipsis,
-                                  maxLines:
-                                      1, // Set the maximum number of lines
+                                  maxLines: 1,
                                 ),
                               ),
                             ],
@@ -169,17 +171,12 @@ class ProfileMenu extends StatelessWidget {
               ],
             ),
           );
-
-          /* return const Center(
-            child: CircularProgressIndicator(),
-          ); */
         },
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: 3,
         onTap: (index) {
           if (index != 3) {
-            // Avoid navigating to the current page
             switch (index) {
               case 0:
                 Navigator.pushNamed(context, '/front');

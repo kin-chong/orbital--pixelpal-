@@ -27,6 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmpwdController.dispose();
     super.dispose();
   }
 
@@ -141,7 +142,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
         FirebaseFirestore.instance
             .collection("Users")
-            .doc(email)
+            .doc(user.uid)
             .set({'username': username, 'bio': 'Empty bio...'});
       } else {
         //showToast(message: "Some error happened");
