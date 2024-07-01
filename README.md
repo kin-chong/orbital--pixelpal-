@@ -31,20 +31,16 @@ As PixelPal is currently in development, you'll need to set up your environment 
 
 ### Steps
 1. Clone the repository:
-
-    git clone [https://github.com/kin-chong/orbital--pixelpal-]
+    `git clone [https://github.com/kin-chong/orbital--pixelpal-]`
 
 2. Navigate to the project directory:
-
-    cd pixelpal
+    `cd pixelpal`
 
 3. Install the necessary dependencies:
-
-    flutter pub get
+    `flutter pub get`
 
 4. Run the app on a simulator or web browser:
-
-    flutter run or flutter run -v(for debugging)
+    `flutter run` or `flutter run -v` (for debugging)
 
 ## Usage
 To get started with PixelPal, follow these simple steps:
