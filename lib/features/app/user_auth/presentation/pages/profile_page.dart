@@ -44,9 +44,9 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () => Navigator.pop(context),
           ),
           TextButton(
-            child: const Text(
+            child: Text(
               'Save',
-              style: TextStyle(color: Colors.yellow),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
             ),
             onPressed: () => Navigator.of(context).pop(newValue),
           ),
@@ -55,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     if (newValue.trim().isNotEmpty) {
-      await usersCollection.doc(user?.email).update({field: newValue});
+      await usersCollection.doc(user?.uid).update({field: newValue});
     }
   }
 
@@ -75,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")
-            .doc(user?.email)
+            .doc(user?.uid)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
