@@ -52,32 +52,39 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: '374638859313-tij5p6jbstktbm7ugt5ae89b75koqid1.apps.googleusercontent.com',
+      clientId:
+          '374638859313-tij5p6jbstktbm7ugt5ae89b75koqid1.apps.googleusercontent.com',
     );
 
     try {
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
       String? email = googleSignInAccount?.email;
 
       if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
         final AuthCredential credential = GoogleAuthProvider.credential(
           idToken: googleSignInAuthentication.idToken,
           accessToken: googleSignInAuthentication.accessToken,
         );
 
-        await _firebaseAuth.signInWithCredential(credential);
+        UserCredential userCredential =
+            await _firebaseAuth.signInWithCredential(credential);
+        User? user = userCredential.user;
 
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection("Users")
-            .doc(email)
-            .get();
-
-        if (!userDoc.exists) {
-          FirebaseFirestore.instance
+        if (user != null) {
+          DocumentSnapshot userDoc = await FirebaseFirestore.instance
               .collection("Users")
-              .doc(email)
-              .set({'username': email, 'bio': 'Empty bio...'});
+              .doc(user.uid)
+              .get();
+
+          if (!userDoc.exists) {
+            FirebaseFirestore.instance
+                .collection("Users")
+                .doc(user.uid)
+                .set({'username': email, 'bio': 'Empty bio...'});
+          }
         }
 
         await _saveLoginState();

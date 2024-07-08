@@ -43,13 +43,14 @@ class ProfileMenu extends StatelessWidget {
           if (!snapshot.hasData || snapshot.data?.data() == null) {
             return Center(
               child: Text(
-                "No data available",
+                "No data available for user ${user?.uid}",
                 style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
               ),
             );
           }
 
           final userData = snapshot.data!.data() as Map<String, dynamic>;
+          //print('User Data: $userData');
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
