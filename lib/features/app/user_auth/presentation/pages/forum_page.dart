@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'bottom_nav_bar.dart'; // Correct import path
 import 'no_animation_page_route.dart'; // Correct import path
+import 'package:intl/intl.dart';
 
 class ForumPage extends StatelessWidget {
   const ForumPage({super.key});
@@ -168,6 +169,11 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     }
   }
 
+  String formatTimestamp(Timestamp timestamp) {
+    var dateTime = timestamp.toDate();
+    return DateFormat('dd MMM yyyy HH:mm').format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -257,6 +263,8 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                           itemCount: snapshot.data?.docs.length ?? 0,
                           itemBuilder: (context, index) {
                             var comment = snapshot.data!.docs[index];
+                            var createdAt = comment['createdAt'] as Timestamp;
+                            var formattedTime = formatTimestamp(createdAt);
                             return FutureBuilder(
                                 future: _getUsername(comment['userId']),
                                 builder: (context, usernameSnapshot) {
@@ -300,14 +308,28 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  username!,
-                                                  style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .tertiary,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      username!,
+                                                      style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .tertiary,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 15),
+                                                    Text(
+                                                      formattedTime,
+                                                      style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
+                                                      ),
+                                                    )
+                                                  ],
                                                 ),
                                                 const SizedBox(height: 4),
                                                 Text(
