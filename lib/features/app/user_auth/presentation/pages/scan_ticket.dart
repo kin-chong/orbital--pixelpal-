@@ -31,8 +31,10 @@ class _ScanPageState extends State<ScanPage> {
       });
 
       final inputImage = InputImage.fromFile(imageFile);
-      final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
-      final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
+      final textRecognizer =
+          TextRecognizer(script: TextRecognitionScript.latin);
+      final RecognizedText recognizedText =
+          await textRecognizer.processImage(inputImage);
 
       String scannedText = recognizedText.text;
       print('Scanned Text: $scannedText'); // Debug log
@@ -52,14 +54,19 @@ class _ScanPageState extends State<ScanPage> {
   void _extractTicketDetails(String scannedText) {
     // Example regex patterns, adjust based on your actual ticket format
     RegExp movieNamePattern = RegExp(r"\)\s*(.*)\s*\(", caseSensitive: false);
-    RegExp datePattern = RegExp(r"DATE\s*:\s*(\d{2}\s*\w+\s*\d{4})", caseSensitive: false);
-    RegExp pricePattern = RegExp(r"PRICE\s*\$\s*([0-9]+\.[0-9]{2})", caseSensitive: false);
+    RegExp datePattern =
+        RegExp(r"DATE\s*:\s*(\d{2}\s*\w+\s*\d{4})", caseSensitive: false);
+    RegExp pricePattern =
+        RegExp(r"PRICE\s*\$\s*([0-9]+\.[0-9]{2})", caseSensitive: false);
 
-    String? movieName = movieNamePattern.firstMatch(scannedText)?.group(1)?.trim();
+    String? movieName =
+        movieNamePattern.firstMatch(scannedText)?.group(1)?.trim();
     String? date = datePattern.firstMatch(scannedText)?.group(1)?.trim();
-    String? ticketPrice = pricePattern.firstMatch(scannedText)?.group(1)?.trim();
+    String? ticketPrice =
+        pricePattern.firstMatch(scannedText)?.group(1)?.trim();
 
-    print('Extracted Details - Movie: $movieName, Date: $date, Price: $ticketPrice'); // Debug log
+    print(
+        'Extracted Details - Movie: $movieName, Date: $date, Price: $ticketPrice'); // Debug log
 
     setState(() {
       _movieNameController.text = movieName ?? '';
@@ -129,12 +136,14 @@ class _ScanPageState extends State<ScanPage> {
       try {
         // Upload the image to Firebase Storage
         String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-        Reference storageReference = FirebaseStorage.instance.ref().child('tickets/$fileName');
+        Reference storageReference =
+            FirebaseStorage.instance.ref().child('tickets/$fileName');
         UploadTask uploadTask = storageReference.putFile(_image!);
 
         // Add error handling for upload task
         uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
-          print('Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
+          print(
+              'Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
         }, onError: (e) {
           print('Error during upload: $e'); // Debug log
           ScaffoldMessenger.of(context).showSnackBar(
@@ -147,7 +156,8 @@ class _ScanPageState extends State<ScanPage> {
         print('Image URL: $imageUrl'); // Debug log
 
         // Save the ticket details to Firestore
-        CollectionReference tickets = FirebaseFirestore.instance.collection('tickets');
+        CollectionReference tickets =
+            FirebaseFirestore.instance.collection('tickets');
         await tickets.add({
           'movie_name': _movieNameController.text,
           'date': _dateController.text,
@@ -155,7 +165,8 @@ class _ScanPageState extends State<ScanPage> {
           'image_url': imageUrl,
           'timestamp': FieldValue.serverTimestamp(),
         });
-        print('Ticket saved: ${_movieNameController.text}, ${_dateController.text}, ${_ticketPriceController.text}, $imageUrl'); // Debug log
+        print(
+            'Ticket saved: ${_movieNameController.text}, ${_dateController.text}, ${_ticketPriceController.text}, $imageUrl'); // Debug log
 
         // Show a success message or navigate to another screen
         ScaffoldMessenger.of(context).showSnackBar(
@@ -169,9 +180,11 @@ class _ScanPageState extends State<ScanPage> {
       }
     } else {
       print('Failed to save ticket. Missing details.');
-      print('Image: $_image, Movie: ${_movieNameController.text}, Date: ${_dateController.text}, Price: ${_ticketPriceController.text}'); // Debug log
+      print(
+          'Image: $_image, Movie: ${_movieNameController.text}, Date: ${_dateController.text}, Price: ${_ticketPriceController.text}'); // Debug log
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to save ticket. Missing details.')),
+        const SnackBar(
+            content: Text('Failed to save ticket. Missing details.')),
       );
     }
   }
@@ -225,9 +238,11 @@ class _ScanPageState extends State<ScanPage> {
                             ? Image.network(
                                 data['image_url'],
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) => Container(
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
                                   color: Colors.grey,
-                                  child: Center(child: Icon(Icons.broken_image)),
+                                  child:
+                                      Center(child: Icon(Icons.broken_image)),
                                 ),
                               )
                             : Container(color: Colors.grey),
@@ -239,11 +254,12 @@ class _ScanPageState extends State<ScanPage> {
                           children: [
                             Text(
                               data['movie_name'] ?? 'Unknown',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text('Date: ${data['date'] ?? 'Unknown'}'),
-                            Text('Price: \$${data['ticket_price'] ?? 'Unknown'}'),
+                            Text(
+                                'Price: \$${data['ticket_price'] ?? 'Unknown'}'),
                           ],
                         ),
                       ),
