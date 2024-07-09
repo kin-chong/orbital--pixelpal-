@@ -8,7 +8,7 @@ class MyTextBox extends StatelessWidget {
     super.key,
     required this.text,
     required this.sectionName,
-    required this.onPressed,
+    this.onPressed,
   });
 
   @override
@@ -31,13 +31,19 @@ class MyTextBox extends StatelessWidget {
                 style:
                     TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
-              IconButton(
-                onPressed: onPressed,
-                icon: Icon(
-                  Icons.edit,
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
-              )
+              onPressed != null
+                  ? IconButton(
+                      onPressed: onPressed,
+                      icon: Icon(
+                        Icons.edit,
+                        color: Theme.of(context).colorScheme.tertiary,
+                      ),
+                    )
+                  : const SizedBox(
+                      width:
+                          48.0, // Width of IconButton to keep the layout consistent
+                      height: 38.0,
+                    ),
             ],
           ),
           Text(

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -38,7 +39,8 @@ class ForumPage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add, color: Theme.of(context).colorScheme.tertiary),
+            icon:
+                Icon(Icons.add, color: Theme.of(context).colorScheme.tertiary),
             onPressed: () {
               Navigator.pushNamed(context, '/createPost');
             },
@@ -62,7 +64,8 @@ class ForumPage extends StatelessWidget {
               itemCount: snapshot.data?.docs.length ?? 0,
               itemBuilder: (context, index) {
                 var post = snapshot.data!.docs[index];
-                String recommendationEmoji = getRecommendationEmoji(post['recommendation']);
+                String recommendationEmoji =
+                    getRecommendationEmoji(post['recommendation']);
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
@@ -134,12 +137,29 @@ class ForumDetailPage extends StatefulWidget {
 
 class _ForumDetailPageState extends State<ForumDetailPage> {
   final TextEditingController _commentController = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser;
+  String? username;
+
+  Future<String?> _getUsername(String userId) async {
+    try {
+      var userDoc = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .get();
+      if (userDoc.exists) {
+        return userDoc['username'];
+      }
+    } catch (e) {
+      print("Error fetching username: $e");
+    }
+    return null;
+  }
 
   Future<void> _addComment() async {
     if (_commentController.text.isNotEmpty) {
       await FirebaseFirestore.instance.collection('comments').add({
         'postId': widget.postId,
-        'userId': 'Anonymous', // Replace with actual user ID
+        'userId': user?.uid, // Replace with actual user ID
         'text': _commentController.text,
         'createdAt': Timestamp.now(),
       });
@@ -160,7 +180,10 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
         ),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance.collection('posts').doc(widget.postId).get(),
+        future: FirebaseFirestore.instance
+            .collection('posts')
+            .doc(widget.postId)
+            .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -168,14 +191,16 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
             return Center(
               child: Text(
                 'Error: ${snapshot.error}',
-                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
             );
           } else if (!snapshot.hasData || !snapshot.data!.exists) {
             return Center(
               child: Text(
                 'Post not found',
-                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
             );
           } else {
@@ -214,6 +239,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                     stream: FirebaseFirestore.instance
                         .collection('comments')
                         .where('postId', isEqualTo: widget.postId)
+                        .orderBy('createdAt', descending: false)
                         .snapshots(),
                     builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -222,7 +248,8 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                         return Center(
                           child: Text(
                             'Error: ${snapshot.error}',
-                            style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.tertiary),
                           ),
                         );
                       } else {
@@ -230,42 +257,74 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                           itemCount: snapshot.data?.docs.length ?? 0,
                           itemBuilder: (context, index) {
                             var comment = snapshot.data!.docs[index];
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: Colors.grey,
-                                    child: Icon(
-                                      FontAwesomeIcons.user,
-                                      color: Theme.of(context).colorScheme.tertiary,
-                                      size: 16,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          comment['userId'],
-                                          style: TextStyle(
-                                            color: Theme.of(context).colorScheme.tertiary,
-                                            fontWeight: FontWeight.bold,
+                            return FutureBuilder(
+                                future: _getUsername(comment['userId']),
+                                builder: (context, usernameSnapshot) {
+                                  if (usernameSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (usernameSnapshot.hasError) {
+                                    return Center(
+                                      child: Text(
+                                        'Error: ${usernameSnapshot.error}',
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .tertiary),
+                                      ),
+                                    );
+                                  } else {
+                                    username =
+                                        usernameSnapshot.data ?? 'Anonymous';
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 16.0),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundColor: Colors.grey,
+                                            child: Icon(
+                                              FontAwesomeIcons.user,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .tertiary,
+                                              size: 16,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          comment['text'],
-                                          style: const TextStyle(color: Colors.white70),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  username!,
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .tertiary,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  comment['text'],
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .secondary),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                });
                           },
                         );
                       }
@@ -279,21 +338,28 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                       Expanded(
                         child: TextField(
                           controller: _commentController,
-                          style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.tertiary),
                           decoration: InputDecoration(
                             hintText: 'Add a comment...',
-                            hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                            hintStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface),
                             enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                              borderSide: BorderSide(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
                             ),
                             focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                              borderSide: BorderSide(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
                             ),
                           ),
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.send, color: Theme.of(context).colorScheme.tertiary),
+                        icon: Icon(Icons.send,
+                            color: Theme.of(context).colorScheme.tertiary),
                         onPressed: _addComment,
                       ),
                     ],

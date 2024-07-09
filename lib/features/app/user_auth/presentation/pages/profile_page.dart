@@ -89,13 +89,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   size: 72,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
-                const SizedBox(height: 10),
-                Text(
+                //const SizedBox(height: 10),
+                /* Text(
                   user!.email!,
                   textAlign: TextAlign.center,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.tertiary),
-                ),
+                ), */
                 const SizedBox(height: 25),
                 Padding(
                   padding: const EdgeInsets.only(left: 25.0),
@@ -104,6 +104,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.tertiary),
                   ),
+                ),
+                MyTextBox(
+                  text: user!.email!,
+                  sectionName: 'Email',
+                  onPressed: null,
                 ),
                 MyTextBox(
                   text: userData['username'],
