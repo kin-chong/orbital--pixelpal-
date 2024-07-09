@@ -1,7 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pixelpal/global/common/text_box.dart';
+import 'package:pixelpal/global/common/utils.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -11,6 +15,15 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  Uint8List? _image;
+
+  void selectImage() async {
+    Uint8List img = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = img;
+    });
+  }
+
   final user = FirebaseAuth.instance.currentUser;
   final usersCollection = FirebaseFirestore.instance.collection("Users");
 
@@ -84,11 +97,42 @@ class _ProfilePageState extends State<ProfilePage> {
             return ListView(
               children: [
                 const SizedBox(height: 20),
-                Icon(
-                  Icons.person,
-                  size: 72,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
+                _image != null
+                    ? Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxWidth: 100,
+                            maxHeight: 100,
+                          ), // Set the desired maximum width here
+                          child: IconButton(
+                            onPressed: selectImage,
+                            icon: Image.memory(_image!),
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                              maxWidth:
+                                  100), // Set the desired maximum width here
+                          child: IconButton(
+                            onPressed: selectImage,
+                            icon: Icon(
+                              Icons.person,
+                              size: 72,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        ),
+                      ),
+                /* IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.person,
+                    size: 72,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ), */
                 //const SizedBox(height: 10),
                 /* Text(
                   user!.email!,

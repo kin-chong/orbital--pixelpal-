@@ -73,7 +73,7 @@
     <key>NSCameraUsageDescription</key>
     <string>We need access to your camera to scan tickets.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>We need access to your photo library to select tickets.</string>
+    <string>We need access to your photo library to select tickets and upload your profile picture.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>We need access to add photos to your photo library.</string>
 </dict>
