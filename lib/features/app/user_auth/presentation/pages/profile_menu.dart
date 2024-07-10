@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
@@ -6,11 +9,41 @@ import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_page.
 import 'package:pixelpal/features/app/user_auth/presentation/pages/settings.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/theme_page.dart';
 import 'package:pixelpal/global/common/list_tile.dart';
+import 'package:pixelpal/global/common/toast.dart';
 
-class ProfileMenu extends StatelessWidget {
+class ProfileMenu extends StatefulWidget {
   ProfileMenu({super.key});
 
+  @override
+  State<ProfileMenu> createState() => _ProfileMenuState();
+}
+
+class _ProfileMenuState extends State<ProfileMenu> {
   final user = FirebaseAuth.instance.currentUser;
+
+  Uint8List? _image;
+  @override
+  void initState() {
+    super.initState();
+    getProfilePic();
+  }
+
+  Future<void> getProfilePic() async {
+    final storageref = FirebaseStorage.instance.ref().child('profile_pic/');
+    final imageref = storageref.child("${user?.uid}.jpg");
+
+    try {
+      final img = await imageref.getData();
+      if (img == null) {
+        return;
+      }
+      setState(() {
+        _image = img;
+      });
+    } catch (e) {
+      showToast(message: 'Profile picture not found');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,12 +116,21 @@ class ProfileMenu extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.person,
-                            color: Theme.of(context).colorScheme.tertiary,
-                            size: 96,
-                          ),
-                          const SizedBox(width: 10),
+                          _image != null
+                              ? ClipOval(
+                                  child: Image.memory(
+                                    _image!,
+                                    width: 96,
+                                    height: 96,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.person,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  size: 96,
+                                ),
+                          const SizedBox(width: 20),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

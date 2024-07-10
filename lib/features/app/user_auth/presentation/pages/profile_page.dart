@@ -2,9 +2,11 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pixelpal/global/common/text_box.dart';
+import 'package:pixelpal/global/common/toast.dart';
 import 'package:pixelpal/global/common/utils.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -16,12 +18,37 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Uint8List? _image;
+  @override
+  void initState() {
+    super.initState();
+    getProfilePic();
+  }
 
   void selectImage() async {
-    Uint8List img = await pickImage(ImageSource.gallery);
+    Uint8List img = await pickImage(context, ImageSource.gallery);
     setState(() {
       _image = img;
     });
+    final storageref = FirebaseStorage.instance.ref().child('profile_pic/');
+    final imageref = storageref.child("${user?.uid}.jpg");
+    await imageref.putData(_image!);
+  }
+
+  Future<void> getProfilePic() async {
+    final storageref = FirebaseStorage.instance.ref().child('profile_pic/');
+    final imageref = storageref.child("${user?.uid}.jpg");
+
+    try {
+      final img = await imageref.getData();
+      if (img == null) {
+        return;
+      }
+      setState(() {
+        _image = img;
+      });
+    } catch (e) {
+      showToast(message: 'Profile picture not found');
+    }
   }
 
   final user = FirebaseAuth.instance.currentUser;
@@ -97,42 +124,36 @@ class _ProfilePageState extends State<ProfilePage> {
             return ListView(
               children: [
                 const SizedBox(height: 20),
-                _image != null
-                    ? Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            maxWidth: 100,
-                            maxHeight: 100,
-                          ), // Set the desired maximum width here
-                          child: IconButton(
-                            onPressed: selectImage,
-                            icon: Image.memory(_image!),
-                          ),
-                        ),
-                      )
-                    : Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(
-                              maxWidth:
-                                  100), // Set the desired maximum width here
-                          child: IconButton(
-                            onPressed: selectImage,
-                            icon: Icon(
+                Column(
+                  children: [
+                    _image != null
+                        ? Center(
+                            child: ClipOval(
+                              child: Image.memory(
+                                _image!,
+                                width: 200,
+                                height: 200,
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: Icon(
                               Icons.person,
-                              size: 72,
+                              size: 200,
                               color: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
-                        ),
+                    SizedBox(height: 5),
+                    TextButton(
+                      onPressed: selectImage,
+                      child: Text(
+                        'Change Picture',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
                       ),
-                /* IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.person,
-                    size: 72,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ), */
+                    ),
+                  ],
+                ),
                 //const SizedBox(height: 10),
                 /* Text(
                   user!.email!,
