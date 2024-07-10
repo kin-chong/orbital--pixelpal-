@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/movie_detail_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/no_animation_page_route.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.dart';
 import 'package:pixelpal/services/movie_service.dart';
 
 class FrontPage extends StatefulWidget {
@@ -74,17 +78,25 @@ class _FrontPageState extends State<FrontPage>
             // Navigate to the appropriate page
             switch (index) {
               case 0:
-                Navigator.pushReplacementNamed(context, '/front');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: FrontPage()),
+                );
               case 1:
-                Navigator.pushReplacementNamed(context, '/scan');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ScanPage()),
+                );
               case 2:
-                Navigator.pushReplacementNamed(context, '/forum');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ForumPage()),
+                );
               case 3:
-                Navigator.pushReplacementNamed(context, '/profile');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ProfileMenu()),
+                );
             }
           },
         ),

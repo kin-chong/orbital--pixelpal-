@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.dart';
 import 'bottom_nav_bar.dart'; // Correct import path
 import 'no_animation_page_route.dart'; // Correct import path
 import 'package:intl/intl.dart';
@@ -108,17 +111,25 @@ class ForumPage extends StatelessWidget {
             // Avoid navigating to the current page
             switch (index) {
               case 0:
-                Navigator.pushNamed(context, '/front');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: FrontPage()),
+                );
               case 1:
-                Navigator.pushNamed(context, '/scan');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ScanPage()),
+                );
               case 2:
-                Navigator.pushNamed(context, '/forum');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ForumPage()),
+                );
               case 3:
-                Navigator.pushNamed(context, '/profile');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ProfileMenu()),
+                );
             }
           }
         },
@@ -392,7 +403,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
           }
         },
       ),
-      bottomNavigationBar: BottomNavBar(
+      /* bottomNavigationBar: BottomNavBar(
         currentIndex: 2,
         onTap: (index) {
           switch (index) {
@@ -410,7 +421,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
               break;
           }
         },
-      ),
+      ), */
     );
   }
 
