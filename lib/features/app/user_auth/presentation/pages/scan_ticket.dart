@@ -3,6 +3,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/no_animation_page_route.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
 import 'dart:io';
 import 'bottom_nav_bar.dart'; // Correct import path
 
@@ -272,33 +276,31 @@ class _ScanPageState extends State<ScanPage> {
         },
       ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 1, // Set the current index to the Scan page
+        currentIndex: 1,
         onTap: (index) {
-          // Get the current route name
-          String? currentRoute = ModalRoute.of(context)?.settings.name;
-
-          // Define target route based on the index
-          String targetRoute;
-          switch (index) {
-            case 0:
-              targetRoute = '/front';
-              break;
-            case 1:
-              targetRoute = '/scan';
-              break;
-            case 2:
-              targetRoute = '/forum';
-              break;
-            case 3:
-              targetRoute = '/profile';
-              break;
-            default:
-              return;
-          }
-
-          // Navigate to the target route only if it's different from the current route
-          if (currentRoute != targetRoute) {
-            Navigator.pushReplacementNamed(context, targetRoute);
+          if (index != 1) {
+            switch (index) {
+              case 0:
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: FrontPage()),
+                );
+              case 1:
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ScanPage()),
+                );
+              case 2:
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ForumPage()),
+                );
+              case 3:
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ProfileMenu()),
+                );
+            }
           }
         },
       ),

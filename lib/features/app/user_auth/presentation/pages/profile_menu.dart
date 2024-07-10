@@ -5,7 +5,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/no_animation_page_route.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_page.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/settings.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/theme_page.dart';
 import 'package:pixelpal/global/common/list_tile.dart';
@@ -222,17 +226,25 @@ class _ProfileMenuState extends State<ProfileMenu> {
           if (index != 3) {
             switch (index) {
               case 0:
-                Navigator.pushNamed(context, '/front');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: FrontPage()),
+                );
               case 1:
-                Navigator.pushNamed(context, '/scan');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ScanPage()),
+                );
               case 2:
-                Navigator.pushNamed(context, '/forum');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ForumPage()),
+                );
               case 3:
-                Navigator.pushNamed(context, '/profile');
-                break;
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ProfileMenu()),
+                );
             }
           }
         },
