@@ -358,7 +358,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                                     style: TextStyle(
                                                       color: Theme.of(context)
                                                           .colorScheme
-                                                          .primary,
+                                                          .secondary,
                                                     ),
                                                   ),
                                                 ],
