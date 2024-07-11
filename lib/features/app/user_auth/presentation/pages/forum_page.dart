@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.dart';
+import 'package:pixelpal/global/common/toast.dart';
 import 'bottom_nav_bar.dart'; // Correct import path
 import 'no_animation_page_route.dart'; // Correct import path
 import 'package:intl/intl.dart';
@@ -185,6 +186,17 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     return DateFormat('dd MMM yyyy HH:mm').format(dateTime);
   }
 
+  Future<void> _deleteComment(String commentId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('comments')
+          .doc(commentId)
+          .delete();
+    } catch (e) {
+      showToast(message: "Error deleting comment: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -276,52 +288,61 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                             var comment = snapshot.data!.docs[index];
                             var createdAt = comment['createdAt'] as Timestamp;
                             var formattedTime = formatTimestamp(createdAt);
+                            var commentUserId = comment['userId'];
+
                             return FutureBuilder(
-                                future: _getUsername(comment['userId']),
-                                builder: (context, usernameSnapshot) {
-                                  if (usernameSnapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  } else if (usernameSnapshot.hasError) {
-                                    return Center(
-                                      child: Text(
-                                        'Error: ${usernameSnapshot.error}',
-                                        style: TextStyle(
+                              future: _getUsername(commentUserId),
+                              builder: (context, usernameSnapshot) {
+                                if (usernameSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                } else if (usernameSnapshot.hasError) {
+                                  return Center(
+                                    child: Text(
+                                      'Error: ${usernameSnapshot.error}',
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary),
+                                    ),
+                                  );
+                                } else {
+                                  username =
+                                      usernameSnapshot.data ?? 'Anonymous';
+
+                                  Widget commentTile = Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 16.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor: Colors.grey,
+                                          radius:
+                                              22, // Increased radius for bigger avatar
+                                          child: Icon(
+                                            FontAwesomeIcons.user,
                                             color: Theme.of(context)
                                                 .colorScheme
-                                                .tertiary),
-                                      ),
-                                    );
-                                  } else {
-                                    username =
-                                        usernameSnapshot.data ?? 'Anonymous';
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 16.0),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          CircleAvatar(
-                                            backgroundColor: Colors.grey,
-                                            child: Icon(
-                                              FontAwesomeIcons.user,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .tertiary,
-                                              size: 16,
-                                            ),
+                                                .tertiary,
+                                            size:
+                                                20, // Increased size of the icon
                                           ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Text(
+                                        ),
+                                        const SizedBox(
+                                            width:
+                                                12), // Increased spacing for better alignment
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
                                                       username!,
                                                       style: TextStyle(
                                                         color: Theme.of(context)
@@ -331,33 +352,56 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                                             FontWeight.bold,
                                                       ),
                                                     ),
-                                                    const SizedBox(width: 15),
-                                                    Text(
-                                                      formattedTime,
-                                                      style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  comment['text'],
-                                                  style: TextStyle(
+                                                  ),
+                                                  Text(
+                                                    formattedTime,
+                                                    style: TextStyle(
                                                       color: Theme.of(context)
                                                           .colorScheme
-                                                          .secondary),
-                                                ),
-                                              ],
-                                            ),
+                                                          .primary,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                  height:
+                                                      2), // Decreased spacing
+                                              Text(
+                                                comment['text'],
+                                                style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary),
+                                              ),
+                                            ],
                                           ),
-                                        ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (commentUserId == user?.uid) {
+                                    commentTile = Dismissible(
+                                      key: Key(comment.id),
+                                      direction: DismissDirection.endToStart,
+                                      onDismissed: (direction) {
+                                        _deleteComment(comment.id);
+                                      },
+                                      background: Container(
+                                        alignment: Alignment.centerRight,
+                                        color: Colors.red,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20.0),
+                                        child: Icon(Icons.delete,
+                                            color: Colors.white),
                                       ),
+                                      child: commentTile,
                                     );
                                   }
-                                });
+                                  return commentTile;
+                                }
+                              },
+                            );
                           },
                         );
                       }
