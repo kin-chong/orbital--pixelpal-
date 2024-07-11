@@ -139,7 +139,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                width: 200,
+                                width: 250,
                                 child: Text(
                                   userData['username'],
                                   style: TextStyle(
@@ -152,7 +152,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                                 ),
                               ),
                               SizedBox(
-                                width: 200,
+                                width: 250,
                                 child: Text(
                                   userData['bio'],
                                   style: TextStyle(
