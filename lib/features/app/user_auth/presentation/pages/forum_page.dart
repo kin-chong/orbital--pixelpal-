@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -153,19 +156,45 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
   final user = FirebaseAuth.instance.currentUser;
   String? username;
 
-  Future<String?> _getUsername(String userId) async {
+  Future<Uint8List?> _getProfilePic(String userId) async {
+    final storageref = FirebaseStorage.instance.ref().child('profile_pic/');
+    final imageref = storageref.child("$userId.jpg");
+
+    try {
+      final img = await imageref.getData();
+      return img;
+    } catch (e) {
+      print('Profile picture not found: $e');
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>> _getUserDetails(String userId) async {
     try {
       var userDoc = await FirebaseFirestore.instance
           .collection("Users")
           .doc(userId)
           .get();
       if (userDoc.exists) {
-        return userDoc['username'];
+        var username = userDoc['username'];
+        var profilePic = await _getProfilePic(userId);
+        return {
+          'username': username,
+          'profilePic': profilePic,
+        };
+      } else {
+        return {
+          'username': 'Anonymous',
+          'profilePic': null,
+        };
       }
     } catch (e) {
-      print("Error fetching username: $e");
+      print("Error fetching user details: $e");
+      return {
+        'username': 'Anonymous',
+        'profilePic': null,
+      };
     }
-    return null;
   }
 
   Future<void> _addComment() async {
@@ -291,7 +320,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                             var commentUserId = comment['userId'];
 
                             return FutureBuilder(
-                              future: _getUsername(commentUserId),
+                              future: _getUserDetails(commentUserId),
                               builder: (context, usernameSnapshot) {
                                 if (usernameSnapshot.connectionState ==
                                     ConnectionState.waiting) {
@@ -308,8 +337,11 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                     ),
                                   );
                                 } else {
-                                  username =
-                                      usernameSnapshot.data ?? 'Anonymous';
+                                  var username =
+                                      usernameSnapshot.data?['username'] ??
+                                          'Anonymous';
+                                  var profilePic =
+                                      usernameSnapshot.data?['profilePic'];
 
                                   Widget commentTile = Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -320,17 +352,21 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                       children: [
                                         CircleAvatar(
                                           backgroundColor: Colors.grey,
-                                          radius:
-                                              22, // Increased radius for bigger avatar
-                                          child: Icon(
-                                            FontAwesomeIcons.user,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .tertiary,
-                                            size:
-                                                20, // Increased size of the icon
-                                          ),
+                                          radius: 22,
+                                          backgroundImage: profilePic != null
+                                              ? MemoryImage(profilePic)
+                                              : null,
+                                          child: profilePic == null
+                                              ? Icon(
+                                                  FontAwesomeIcons.user,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .tertiary,
+                                                  size: 20,
+                                                )
+                                              : null,
                                         ),
+
                                         const SizedBox(
                                             width:
                                                 12), // Increased spacing for better alignment
@@ -358,7 +394,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                                     style: TextStyle(
                                                       color: Theme.of(context)
                                                           .colorScheme
-                                                          .primary,
+                                                          .secondary,
                                                     ),
                                                   ),
                                                 ],
@@ -447,25 +483,6 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
           }
         },
       ),
-      /* bottomNavigationBar: BottomNavBar(
-        currentIndex: 2,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/scan');
-              break;
-            case 2:
-              // Stay on the current page
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/profile');
-              break;
-          }
-        },
-      ), */
     );
   }
 
