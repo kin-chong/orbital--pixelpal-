@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -12,6 +13,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _bodyTextController = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser;
+
   String _recommendation = 'Highly recommend';
 
   Future<void> _createPost() async {
@@ -21,6 +24,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
         'bodyText': _bodyTextController.text,
         'recommendation': _recommendation,
         'createdAt': Timestamp.now(),
+        'userId': user?.uid,
         // Add more fields as needed
       });
 
@@ -35,12 +39,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text(
+        title: Text(
           'Create Post',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
         ),
       ),
       body: Padding(
@@ -52,15 +54,18 @@ class _CreatePostPageState extends State<CreatePostPage> {
             children: [
               TextFormField(
                 controller: _titleController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
+                style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                decoration: InputDecoration(
                   labelText: 'Movie Title',
-                  labelStyle: TextStyle(color: Colors.white),
+                  labelStyle:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                 ),
                 validator: (value) {
@@ -73,15 +78,19 @@ class _CreatePostPageState extends State<CreatePostPage> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _bodyTextController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                decoration: InputDecoration(
                   labelText: 'Body Text',
-                  labelStyle: TextStyle(color: Colors.white),
+                  labelStyle:
+                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                 ),
                 maxLines: 5,
@@ -95,16 +104,19 @@ class _CreatePostPageState extends State<CreatePostPage> {
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _recommendation,
-                dropdownColor: Colors.black,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
+                dropdownColor: Theme.of(context).colorScheme.primary,
+                style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                decoration: InputDecoration(
                   labelText: 'Recommendation',
-                  labelStyle: TextStyle(color: Colors.white),
+                  labelStyle:
+                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                 ),
                 items: <String>[
@@ -135,8 +147,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
               ElevatedButton(
                 onPressed: _createPost,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.yellow,
-                  foregroundColor: Colors.black,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  foregroundColor: Theme.of(context).colorScheme.onSecondary,
                 ),
                 child: const Text('Create Post'),
               ),
