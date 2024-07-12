@@ -270,13 +270,61 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      FutureBuilder<Map<String, dynamic>>(
+                        future: _getUserDetails(post['userId']),
+                        builder: (context, userSnapshot) {
+                          if (userSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (userSnapshot.hasError) {
+                            return Text(
+                              'Error: ${userSnapshot.error}',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            );
+                          } else {
+                            var username =
+                                userSnapshot.data!['username'] ?? 'Anonymous';
+                            var profilePic = userSnapshot.data?['profilePic'];
+                            return Row(
+                              children: [
+                                Text('Created by:'),
+                                SizedBox(width: 10),
+                                CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  radius: 15,
+                                  backgroundImage: profilePic != null
+                                      ? MemoryImage(profilePic)
+                                      : null,
+                                  child: profilePic == null
+                                      ? Icon(
+                                          FontAwesomeIcons.user,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary,
+                                          size: 20,
+                                        )
+                                      : null,
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  username,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 4),
                       Text(
                         post['title'],
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
                             fontSize: 24),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 4),
                       Text(
                         post['bodyText'],
                         style: TextStyle(
