@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/movie_detail_page.dart';
@@ -17,10 +19,11 @@ class FrontPage extends StatefulWidget {
 class _FrontPageState extends State<FrontPage>
     with SingleTickerProviderStateMixin {
   final MovieService _movieService = MovieService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<List<dynamic>>? _upcomingMovies;
   Future<List<dynamic>>? _currentlyShowingMovies;
-  Set<int> _favoriteMovieIds = {};
 
   @override
   void initState() {
@@ -69,7 +72,7 @@ class _FrontPageState extends State<FrontPage>
           children: [
             _buildUpcomingMoviesList(),
             _buildPopularMoviesList(),
-            _buildFavoriteMoviesList(),
+            FavoritesTab(),
           ],
         ),
         bottomNavigationBar: BottomNavBar(
@@ -137,16 +140,6 @@ class _FrontPageState extends State<FrontPage>
                       MaterialPageRoute(
                         builder: (context) => MovieDetailPage(
                           movieId: movie['id'],
-                          isFavorite: _favoriteMovieIds.contains(movie['id']),
-                          onFavoriteChanged: (isFavorite) {
-                            setState(() {
-                              if (isFavorite) {
-                                _favoriteMovieIds.add(movie['id']);
-                              } else {
-                                _favoriteMovieIds.remove(movie['id']);
-                              }
-                            });
-                          },
                         ),
                       ),
                     );
@@ -247,16 +240,6 @@ class _FrontPageState extends State<FrontPage>
                     MaterialPageRoute(
                       builder: (context) => MovieDetailPage(
                         movieId: movie['id'],
-                        isFavorite: _favoriteMovieIds.contains(movie['id']),
-                        onFavoriteChanged: (isFavorite) {
-                          setState(() {
-                            if (isFavorite) {
-                              _favoriteMovieIds.add(movie['id']);
-                            } else {
-                              _favoriteMovieIds.remove(movie['id']);
-                            }
-                          });
-                        },
                       ),
                     ),
                   );
@@ -324,19 +307,48 @@ class _FrontPageState extends State<FrontPage>
       },
     );
   }
+}
 
-  Widget _buildFavoriteMoviesList() {
-    if (_favoriteMovieIds.isEmpty) {
-      return Center(
-        child: Text(
-          'No favorite movies',
-          style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
-        ),
-      );
+class FavoritesTab extends StatefulWidget {
+  @override
+  _FavoritesTabState createState() => _FavoritesTabState();
+}
+
+class _FavoritesTabState extends State<FavoritesTab> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final MovieService _movieService = MovieService();
+  Future<List<int>>? _favoriteMovies;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavoriteMovies();
+  }
+
+  void _loadFavoriteMovies() {
+    setState(() {
+      _favoriteMovies = _fetchFavoriteMovies();
+    });
+  }
+
+  Future<List<int>> _fetchFavoriteMovies() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('Users').doc(currentUser.uid).get();
+      if (userDoc.exists) {
+        List<dynamic> favMovies = userDoc.get('fav_movie') ?? [];
+        return List<int>.from(favMovies);
+      }
     }
+    return [];
+  }
 
-    return FutureBuilder<List<dynamic>>(
-      future: _movieService.fetchMoviesByIds(_favoriteMovieIds.toList()),
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<int>>(
+      future: _favoriteMovies,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -345,97 +357,114 @@ class _FrontPageState extends State<FrontPage>
               child: Text('Error: ${snapshot.error}',
                   style: const TextStyle(color: Colors.white)));
         } else {
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1,
-            ),
-            itemCount: snapshot.data?.length ?? 0,
-            itemBuilder: (context, index) {
-              var movie = snapshot.data![index];
-              String? posterPath = movie['poster_path'];
-              String imageUrl = posterPath != null
-                  ? 'https://image.tmdb.org/t/p/w500$posterPath'
-                  : 'https://via.placeholder.com/500'; // A placeholder image URL
+          List<int> favoriteMovieIds = snapshot.data ?? [];
+          if (favoriteMovieIds.isEmpty) {
+            return Center(
+              child: Text(
+                'No favorite movies',
+                style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+              ),
+            );
+          }
 
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MovieDetailPage(
-                        movieId: movie['id'],
-                        isFavorite: _favoriteMovieIds.contains(movie['id']),
-                        onFavoriteChanged: (isFavorite) {
-                          setState(() {
-                            if (isFavorite) {
-                              _favoriteMovieIds.add(movie['id']);
-                            } else {
-                              _favoriteMovieIds.remove(movie['id']);
-                            }
-                          });
-                        },
-                      ),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          image: DecorationImage(
-                            image: NetworkImage(imageUrl),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(15),
-                              bottomRight: Radius.circular(15),
+          return FutureBuilder<List<dynamic>>(
+            future: _movieService.fetchMoviesByIds(favoriteMovieIds),
+            builder: (context, movieSnapshot) {
+              if (movieSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (movieSnapshot.hasError) {
+                return Center(
+                    child: Text('Error: ${movieSnapshot.error}',
+                        style: const TextStyle(color: Colors.white)));
+              } else {
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: movieSnapshot.data?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    var movie = movieSnapshot.data![index];
+                    String? posterPath = movie['poster_path'];
+                    String imageUrl = posterPath != null
+                        ? 'https://image.tmdb.org/t/p/w500$posterPath'
+                        : 'https://via.placeholder.com/500'; // A placeholder image URL
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MovieDetailPage(
+                              movieId: movie['id'],
                             ),
                           ),
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                movie['title'],
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                        ).then((value) {
+                          if (value != null) {
+                            _loadFavoriteMovies();
+                          }
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                image: DecorationImage(
+                                  image: NetworkImage(imageUrl),
+                                  fit: BoxFit.cover,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 5),
-                              Text(
-                                'Release Date: ${movie['release_date']}',
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.5),
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(15),
+                                    bottomRight: Radius.circular(15),
+                                  ),
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      movie['title'],
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'Release Date: ${movie['release_date']}',
+                                      style: const TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 12,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              );
+                    );
+                  },
+                );
+              }
             },
           );
         }

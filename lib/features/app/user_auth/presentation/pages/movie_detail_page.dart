@@ -1,17 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../../../../services/movie_service.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final int movieId;
-  final bool isFavorite;
-  final ValueChanged<bool> onFavoriteChanged;
+  // final bool isFavorite;
+  // final ValueChanged<bool> onFavoriteChanged;
 
   const MovieDetailPage({
     super.key,
     required this.movieId,
-    required this.isFavorite,
-    required this.onFavoriteChanged,
+    // required this.isFavorite,
+    // required this.onFavoriteChanged,
   });
 
   @override
@@ -23,12 +25,14 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   Future<Map<String, dynamic>>? _movieDetails;
   YoutubePlayerController? _youtubePlayerController;
   bool _isFavorite = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
     _movieDetails = _movieService.fetchMovieDetails(widget.movieId);
-    _isFavorite = widget.isFavorite;
+    _checkIfFavorite();
   }
 
   @override
@@ -37,11 +41,49 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     super.dispose();
   }
 
-  void _toggleFavorite() {
+  Future<void> _checkIfFavorite() async {
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('Users').doc(currentUser.uid).get();
+
+      if (userDoc.exists) {
+        List<dynamic> favMovies = userDoc.get('fav_movie') ?? [];
+        setState(() {
+          _isFavorite = favMovies.contains(widget.movieId);
+        });
+      }
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
     setState(() {
       _isFavorite = !_isFavorite;
     });
-    widget.onFavoriteChanged(_isFavorite);
+
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      DocumentReference userDoc =
+          _firestore.collection('Users').doc(currentUser.uid);
+
+      try {
+        if (_isFavorite) {
+          await userDoc.update({
+            'fav_movie': FieldValue.arrayUnion([widget.movieId])
+          });
+        } else {
+          await userDoc.update({
+            'fav_movie': FieldValue.arrayRemove([widget.movieId])
+          });
+        }
+      } catch (e) {
+        print('Error updating favorites: $e');
+      }
+    } else {
+      print('No authenticated user.');
+    }
   }
 
   @override
@@ -54,10 +96,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             style: TextStyle(color: Theme.of(context).colorScheme.tertiary)),
         leading: IconButton(
           icon: Icon(Icons.arrow_back,
-              color: Theme.of(context)
-                  .colorScheme
-                  .tertiary), // Make the back button yellow
-          onPressed: () => Navigator.of(context).pop(),
+              color: Theme.of(context).colorScheme.tertiary),
+          onPressed: () => Navigator.of(context).pop(_isFavorite),
         ),
         actions: [
           IconButton(
@@ -108,7 +148,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AspectRatio(
-                      aspectRatio: 2 / 3, // Adjust the aspect ratio based on the poster's typical aspect ratio
+                      aspectRatio: 2 / 3,
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
@@ -118,7 +158,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                   ? 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'
                                   : 'https://via.placeholder.com/500', // A placeholder image URL
                             ),
-                            fit: BoxFit.contain, // Ensure the full poster is displayed
+                            fit: BoxFit
+                                .contain, // Ensure the full poster is displayed
                           ),
                         ),
                       ),
