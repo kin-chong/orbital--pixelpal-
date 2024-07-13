@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -133,6 +134,8 @@ class _ScanPageState extends State<ScanPage> {
   }
 
   Future<void> _saveTicketDetails() async {
+    final user = FirebaseAuth.instance.currentUser;
+
     if (_image != null &&
         _movieNameController.text.isNotEmpty &&
         _dateController.text.isNotEmpty &&
@@ -163,6 +166,7 @@ class _ScanPageState extends State<ScanPage> {
         CollectionReference tickets =
             FirebaseFirestore.instance.collection('tickets');
         await tickets.add({
+          'userId': user!.uid,
           'movie_name': _movieNameController.text,
           'date': _dateController.text,
           'ticket_price': _ticketPriceController.text,
@@ -203,6 +207,8 @@ class _ScanPageState extends State<ScanPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -215,7 +221,10 @@ class _ScanPageState extends State<ScanPage> {
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('tickets').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('tickets')
+            .where('userId', isEqualTo: user!.uid)
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
