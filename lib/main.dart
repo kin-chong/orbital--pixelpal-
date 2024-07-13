@@ -14,8 +14,10 @@ import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.d
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pixelpal/global/common/theme_provider.dart';
 import 'package:provider/provider.dart';
-//import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_page.dart'; // Add ScanPage if it's not already added
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'services/movie_service.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/welcome_page.dart'; // Import WelcomePage
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,7 +58,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'PixelPal',
       theme: Provider.of<ThemeProvider>(context).themeData,
-      initialRoute: isLoggedIn ? '/front' : '/login',
+      initialRoute: isLoggedIn ? '/authWrapper' : '/login',
       routes: {
         '/splash_screen': (context) => const SplashScreen(),
         '/login': (context) => const LoginPage(),
@@ -70,6 +72,47 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const FrontPage(),
         '/scan': (context) => const ScanPage(),
         '/createPost': (context) => const CreatePostPage(),
+        '/authWrapper': (context) => const AuthWrapper(),
+        '/welcome': (context) => const WelcomePage(),
+      },
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+    return StreamBuilder<User?>(
+      stream: _auth.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasData && snapshot.data != null) {
+          return FutureBuilder<DocumentSnapshot>(
+            future: _firestore.collection('Users').doc(snapshot.data!.uid).get(),
+            builder: (context, userSnapshot) {
+              if (userSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (userSnapshot.hasData && userSnapshot.data!.exists) {
+                final userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                if (userData['isNew'] == true) {
+                  return const WelcomePage();
+                } else {
+                  return const FrontPage();
+                }
+              } else {
+                return const WelcomePage();
+              }
+            },
+          );
+        } else {
+          return const LoginPage();
+        }
       },
     );
   }
