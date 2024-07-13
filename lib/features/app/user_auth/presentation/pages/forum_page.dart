@@ -226,6 +226,47 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     }
   }
 
+  Future<void> _deletePost() async {
+    final confirmed = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Confirm Delete'),
+          content: Text('Are you sure you want to delete this post?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(
+                'Delete',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('posts')
+            .doc(widget.postId)
+            .delete();
+        Navigator.pop(context); // Go back to the previous screen after deletion
+      } catch (e) {
+        showToast(message: "Error deleting post: $e");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -236,6 +277,35 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
           'Forum Post Details',
           style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
         ),
+        actions: [
+          FutureBuilder<DocumentSnapshot>(
+            future: FirebaseFirestore.instance
+                .collection('posts')
+                .doc(widget.postId)
+                .get(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Container(); // Show nothing while loading
+              } else if (snapshot.hasError) {
+                return Container(); // Handle error appropriately
+              } else if (snapshot.hasData && snapshot.data!.exists) {
+                var post = snapshot.data!;
+                var postUserId = post['userId'];
+                if (postUserId == user?.uid) {
+                  return IconButton(
+                    icon: Icon(Icons.delete,
+                        color: Theme.of(context).colorScheme.tertiary),
+                    onPressed: _deletePost,
+                  );
+                } else {
+                  return Container(); // Show nothing if not the creator
+                }
+              } else {
+                return Container(); // Handle case where post does not exist
+              }
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
