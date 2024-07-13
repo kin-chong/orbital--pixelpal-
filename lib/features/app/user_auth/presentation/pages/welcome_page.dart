@@ -24,7 +24,7 @@ class _WelcomePageState extends State<WelcomePage> {
   Future<void> _saveData() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
-      await _firestore.collection('Users').doc(currentUser.uid).set({
+      await _firestore.collection('Users').doc(currentUser.uid).update({
         'age': _age,
         'gender': _gender,
         'moviePreferences': _moviePreferences,
