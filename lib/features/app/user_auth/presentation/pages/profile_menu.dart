@@ -45,7 +45,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
         _image = img;
       });
     } catch (e) {
-      showToast(message: 'Profile picture not found');
+      // showToast(message: 'Profile picture not found');
     }
   }
 

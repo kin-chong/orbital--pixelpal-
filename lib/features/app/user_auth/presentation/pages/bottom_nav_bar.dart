@@ -40,7 +40,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         _image = img;
       });
     } catch (e) {
-      showToast(message: 'Profile picture not found');
+      // showToast(message: 'Profile picture not found');
     }
   }
 

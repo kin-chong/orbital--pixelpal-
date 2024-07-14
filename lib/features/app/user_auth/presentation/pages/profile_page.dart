@@ -47,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
         _image = img;
       });
     } catch (e) {
-      showToast(message: 'Profile picture not found');
+      // showToast(message: 'Profile picture not found');
     }
   }
 
