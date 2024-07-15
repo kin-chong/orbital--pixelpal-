@@ -141,7 +141,6 @@ class _SignUpPageState extends State<SignUpPage> {
         FirebaseFirestore.instance.collection("Users").doc(user.uid).set({
           'username': username,
           'bio': 'Empty bio...',
-          'isNew': true,  // Flag to indicate new user
         });
 
         // Navigate to the WelcomePage

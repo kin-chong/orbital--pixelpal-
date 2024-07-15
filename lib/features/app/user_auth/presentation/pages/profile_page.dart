@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pixelpal/global/common/select_image.dart';
 import 'package:pixelpal/global/common/text_box.dart';
 import 'package:pixelpal/global/common/toast.dart';
 import 'package:pixelpal/global/common/utils.dart';
@@ -22,16 +23,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     getProfilePic();
-  }
-
-  void selectImage() async {
-    Uint8List img = await pickImage(context, ImageSource.gallery);
-    setState(() {
-      _image = img;
-    });
-    final storageref = FirebaseStorage.instance.ref().child('profile_pic/');
-    final imageref = storageref.child("${user?.uid}.jpg");
-    await imageref.putData(_image!);
   }
 
   Future<void> getProfilePic() async {
@@ -145,7 +136,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                     SizedBox(height: 5),
                     TextButton(
-                      onPressed: selectImage,
+                      onPressed: () async {
+                        Uint8List? img = await selectImage(context, user);
+                        if (img != null) {
+                          setState(() {
+                            _image = img;
+                          });
+                        }
+                      },
                       child: Text(
                         'Change Picture',
                         style: TextStyle(
