@@ -19,6 +19,27 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Uint8List? _image;
+  List<String> _availableGenres = [
+    'Action',
+    'Adventure',
+    'Animation',
+    'Comedy',
+    'Crime',
+    'Documentary',
+    'Drama',
+    'Family',
+    'Fantasy',
+    'History',
+    'Horror',
+    'Music',
+    'Mystery',
+    'Romance',
+    'Sci-Fi',
+    'Thriller',
+    'War',
+    'Western'
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +66,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final user = FirebaseAuth.instance.currentUser;
   final usersCollection = FirebaseFirestore.instance.collection("Users");
 
-  Future<void> editField(String field) async {
+  Future<void> editField(String field,
+      {bool isNumeric = false, List<String>? options}) async {
     String newValue = "";
     await showDialog(
       context: context,
@@ -55,17 +77,45 @@ class _ProfilePageState extends State<ProfilePage> {
           "Edit $field",
           style: const TextStyle(color: Colors.white),
         ),
-        content: TextField(
-          autofocus: true,
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            hintText: "Enter new $field",
-            hintStyle: const TextStyle(color: Colors.grey),
-          ),
-          onChanged: (value) {
-            newValue = value;
-          },
-        ),
+        content: options == null
+            ? TextField(
+                autofocus: true,
+                style: const TextStyle(color: Colors.white),
+                keyboardType:
+                    isNumeric ? TextInputType.number : TextInputType.text,
+                decoration: InputDecoration(
+                  hintText: "Enter new $field",
+                  hintStyle: const TextStyle(color: Colors.grey),
+                ),
+                onChanged: (value) {
+                  newValue = value;
+                },
+              )
+            : StatefulBuilder(
+                builder: (context, setState) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: options.map((option) {
+                      return CheckboxListTile(
+                        title: Text(
+                          option,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        value: newValue.contains(option),
+                        onChanged: (bool? selected) {
+                          setState(() {
+                            if (selected == true) {
+                              newValue += '$option, ';
+                            } else {
+                              newValue = newValue.replaceFirst('$option, ', '');
+                            }
+                          });
+                        },
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
         actions: [
           TextButton(
             child: const Text(
@@ -86,7 +136,130 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     if (newValue.trim().isNotEmpty) {
-      await usersCollection.doc(user?.uid).update({field: newValue});
+      if (isNumeric) {
+        await usersCollection
+            .doc(user?.uid)
+            .update({field: int.parse(newValue)});
+      } else {
+        await usersCollection.doc(user?.uid).update({field: newValue});
+      }
+    }
+  }
+
+  Future<void> editGender() async {
+    String? newGender;
+    newGender = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        title: const Text(
+          "Edit Gender",
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            RadioListTile<String>(
+              title: const Text('Male', style: TextStyle(color: Colors.white)),
+              value: 'Male',
+              groupValue: newGender,
+              onChanged: (value) {
+                Navigator.of(context).pop(value);
+              },
+            ),
+            RadioListTile<String>(
+              title:
+                  const Text('Female', style: TextStyle(color: Colors.white)),
+              value: 'Female',
+              groupValue: newGender,
+              onChanged: (value) {
+                Navigator.of(context).pop(value);
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('Non-binary',
+                  style: TextStyle(color: Colors.white)),
+              value: 'Non-binary',
+              groupValue: newGender,
+              onChanged: (value) {
+                Navigator.of(context).pop(value);
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('Prefer not to say',
+                  style: TextStyle(color: Colors.white)),
+              value: 'Prefer not to say',
+              groupValue: newGender,
+              onChanged: (value) {
+                Navigator.of(context).pop(value);
+              },
+            ),
+          ],
+        ),
+      ),
+    ) as String;
+
+    if (newGender != null && newGender.isNotEmpty) {
+      await usersCollection.doc(user?.uid).update({'gender': newGender});
+    }
+  }
+
+  Future<void> editMoviePreferences(List<String> initialGenres) async {
+    List<String> selectedGenres = List.from(initialGenres);
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        title: const Text(
+          "Edit Movie Preferences",
+          style: TextStyle(color: Colors.white),
+        ),
+        content: StatefulBuilder(
+          builder: (context, setState) {
+            return Wrap(
+              spacing: 8.0,
+              runSpacing: 4.0,
+              children: _availableGenres.map((genre) {
+                return ChoiceChip(
+                  label: Text(genre),
+                  selected: selectedGenres.contains(genre),
+                  onSelected: (bool selected) {
+                    setState(() {
+                      if (selected) {
+                        selectedGenres.add(genre);
+                      } else {
+                        selectedGenres.remove(genre);
+                      }
+                    });
+                  },
+                );
+              }).toList(),
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text(
+              'Save',
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            ),
+            onPressed: () => Navigator.of(context).pop(selectedGenres),
+          ),
+        ],
+      ),
+    );
+
+    if (selectedGenres.isNotEmpty) {
+      await usersCollection
+          .doc(user?.uid)
+          .update({'moviePreferences': selectedGenres});
     }
   }
 
@@ -152,13 +325,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ],
                 ),
-                //const SizedBox(height: 10),
-                /* Text(
-                  user!.email!,
-                  textAlign: TextAlign.center,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
-                ), */
                 const SizedBox(height: 25),
                 Padding(
                   padding: const EdgeInsets.only(left: 25.0),
@@ -178,15 +344,27 @@ class _ProfilePageState extends State<ProfilePage> {
                   sectionName: 'Username',
                   onPressed: () => editField('username'),
                 ),
-                /* MyTextBox(
-                  text: user!.email!,
-                  sectionName: 'Email',
-                  onPressed: () {},
-                ), */
                 MyTextBox(
                   text: userData['bio'],
                   sectionName: 'Bio',
                   onPressed: () => editField('bio'),
+                ),
+                MyTextBox(
+                  text: userData['age']?.toString() ?? '',
+                  sectionName: 'Age',
+                  onPressed: () => editField('age', isNumeric: true),
+                ),
+                MyTextBox(
+                  text: userData['gender'],
+                  sectionName: 'Gender',
+                  onPressed: () => editGender(),
+                ),
+                MyTextBox(
+                  text: (userData['moviePreferences'] as List<dynamic>)
+                      .join(', '),
+                  sectionName: 'Movie Preferences',
+                  onPressed: () => editMoviePreferences(
+                      List<String>.from(userData['moviePreferences'])),
                 ),
               ],
             );
