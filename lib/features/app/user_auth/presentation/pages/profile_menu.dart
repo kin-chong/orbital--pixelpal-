@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
@@ -24,8 +24,8 @@ class ProfileMenu extends StatefulWidget {
 
 class _ProfileMenuState extends State<ProfileMenu> {
   final user = FirebaseAuth.instance.currentUser;
-
   Uint8List? _image;
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +47,12 @@ class _ProfileMenuState extends State<ProfileMenu> {
     } catch (e) {
       // showToast(message: 'Profile picture not found');
     }
+  }
+
+  void updateProfilePic(Uint8List? newImage) {
+    setState(() {
+      _image = newImage;
+    });
   }
 
   @override
@@ -110,13 +116,21 @@ class _ProfileMenuState extends State<ProfileMenu> {
                     ),
                     const SizedBox(height: 10),
                     TextButton(
-                      onPressed: () {
-                        Navigator.push(
+                      onPressed: () async {
+                        Uint8List? newImage = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ProfilePage(),
+                            builder: (context) => ProfilePage(
+                              onProfilePicUpdated: updateProfilePic,
+                            ),
                           ),
                         );
+
+                        if (newImage != null) {
+                          setState(() {
+                            _image = newImage;
+                          });
+                        }
                       },
                       child: Row(
                         children: [
@@ -141,7 +155,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                               SizedBox(
                                 width: 250,
                                 child: Text(
-                                  userData['username'],
+                                  userData['username'] ?? '',
                                   style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.tertiary,
@@ -154,7 +168,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                               SizedBox(
                                 width: 250,
                                 child: Text(
-                                  userData['bio'],
+                                  userData['bio'] ?? '',
                                   style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.tertiary,

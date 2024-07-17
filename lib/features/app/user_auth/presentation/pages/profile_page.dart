@@ -11,7 +11,10 @@ import 'package:pixelpal/global/common/toast.dart';
 import 'package:pixelpal/global/common/utils.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final ValueChanged<Uint8List?> onProfilePicUpdated;
+
+  const ProfilePage({Key? key, required this.onProfilePicUpdated})
+      : super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -19,7 +22,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Uint8List? _image;
-  List<String> _availableGenres = [
+  final List<String> _availableGenres = [
     'Action',
     'Adventure',
     'Animation',
@@ -283,7 +286,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final userData = snapshot.data!.data() as Map<String, dynamic>;
+            final userData = snapshot.data!.data() as Map<String, dynamic>?;
 
             return ListView(
               children: [
@@ -315,6 +318,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           setState(() {
                             _image = img;
                           });
+                          widget.onProfilePicUpdated(img);
                         }
                       },
                       child: Text(
@@ -340,37 +344,38 @@ class _ProfilePageState extends State<ProfilePage> {
                   onPressed: null,
                 ),
                 MyTextBox(
-                  text: userData['username'],
+                  text: userData?['username'] ?? '',
                   sectionName: 'Username',
                   onPressed: () => editField('username'),
                 ),
                 MyTextBox(
-                  text: userData['bio'],
+                  text: userData?['bio'] ?? '',
                   sectionName: 'Bio',
                   onPressed: () => editField('bio'),
                 ),
                 MyTextBox(
-                  text: userData['age']?.toString() ?? '',
+                  text: userData?['age']?.toString() ?? '',
                   sectionName: 'Age',
                   onPressed: () => editField('age', isNumeric: true),
                 ),
                 MyTextBox(
-                  text: userData['gender'],
+                  text: userData?['gender'] ?? '',
                   sectionName: 'Gender',
                   onPressed: () => editGender(),
                 ),
                 MyTextBox(
-                  text: (userData['moviePreferences'] as List<dynamic>)
-                      .join(', '),
+                  text: (userData?['moviePreferences'] as List<dynamic>?)
+                          ?.join(', ') ??
+                      '',
                   sectionName: 'Movie Preferences',
                   onPressed: () => editMoviePreferences(
-                      List<String>.from(userData['moviePreferences'])),
+                      List<String>.from(userData?['moviePreferences'] ?? [])),
                 ),
               ],
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Error${snapshot.error}'),
+              child: Text('Error: ${snapshot.error}'),
             );
           }
 
