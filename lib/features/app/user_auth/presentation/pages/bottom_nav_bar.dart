@@ -21,6 +21,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final user = FirebaseAuth.instance.currentUser;
 
   Uint8List? _image;
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +43,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
     } catch (e) {
       // showToast(message: 'Profile picture not found');
     }
+  }
+
+  void updateProfilePic(Uint8List? newImage) {
+    setState(() {
+      _image = newImage;
+    });
   }
 
   @override
@@ -77,7 +84,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     child: Image.memory(_image!),
                   ),
                 )
-              : Icon(FontAwesomeIcons.user),
+              : const Icon(FontAwesomeIcons.user),
           label: 'Profile',
           tooltip: 'Profile',
         ),

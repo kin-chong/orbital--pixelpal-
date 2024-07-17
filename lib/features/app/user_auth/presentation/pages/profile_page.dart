@@ -11,7 +11,10 @@ import 'package:pixelpal/global/common/toast.dart';
 import 'package:pixelpal/global/common/utils.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final ValueChanged<Uint8List?> onProfilePicUpdated;
+
+  const ProfilePage({Key? key, required this.onProfilePicUpdated})
+      : super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -19,7 +22,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Uint8List? _image;
-  List<String> _availableGenres = [
+  final List<String> _availableGenres = [
     'Action',
     'Adventure',
     'Animation',
@@ -315,6 +318,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           setState(() {
                             _image = img;
                           });
+                          widget.onProfilePicUpdated(img);
                         }
                       },
                       child: Text(
