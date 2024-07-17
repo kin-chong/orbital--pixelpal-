@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixelpal/services/movie_service.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/movie_detail_page.dart';
 
 class UserProfilePage extends StatelessWidget {
   final String userId;
+  final MovieService _movieService = MovieService(); // Instantiate MovieService
 
-  const UserProfilePage({super.key, required this.userId});
+  UserProfilePage({super.key, required this.userId});
 
   Future<Map<String, dynamic>> _getUserDetails(String userId) async {
     try {
@@ -17,10 +20,24 @@ class UserProfilePage extends StatelessWidget {
           .doc(userId)
           .get();
       if (userDoc.exists) {
-        var username = userDoc['username'];
+        var username = userDoc.data()?['username']?.toString() ?? '';
+        var age = userDoc.data()?['age']?.toString() ?? '';
+        var bio = userDoc.data()?['bio']?.toString() ?? '';
+        var gender = userDoc.data()?['gender']?.toString() ?? '';
+        var moviePreferences = userDoc.data()?['moviePreferences'] != null
+            ? (userDoc.data()?['moviePreferences'] as List<dynamic>).join(', ')
+            : '';
+        var favMovies = userDoc.data()?['fav_movie'] != null
+            ? List<int>.from(userDoc.data()?['fav_movie'] as List<dynamic>)
+            : <int>[];
         var profilePic = await _getProfilePic(userId);
         return {
           'username': username,
+          'age': age,
+          'bio': bio,
+          'gender': gender,
+          'moviePreferences': moviePreferences,
+          'favMovies': favMovies,
           'profilePic': profilePic,
         };
       } else {
@@ -51,6 +68,10 @@ class UserProfilePage extends StatelessWidget {
     }
   }
 
+  Future<List<dynamic>> _fetchFavoriteMoviesDetails(List<int> movieIds) async {
+    return await _movieService.fetchMoviesByIds(movieIds);
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, dynamic>>(
@@ -65,7 +86,7 @@ class UserProfilePage extends StatelessWidget {
             body: Center(
               child: Text(
                 'Error: ${snapshot.error}',
-                style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
           );
@@ -73,6 +94,11 @@ class UserProfilePage extends StatelessWidget {
           var userDetails = snapshot.data!;
           var profilePic = userDetails['profilePic'];
           var username = userDetails['username'];
+          var age = userDetails['age'];
+          var bio = userDetails['bio'];
+          var gender = userDetails['gender'];
+          var moviePreferences = userDetails['moviePreferences'];
+          var favMovies = userDetails['favMovies'] as List<int>;
 
           return Scaffold(
             body: CustomScrollView(
@@ -119,7 +145,8 @@ class UserProfilePage extends StatelessWidget {
                               child: Center(
                                 child: Icon(
                                   FontAwesomeIcons.user,
-                                  color: Theme.of(context).colorScheme.tertiary,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   size: 100,
                                 ),
                               ),
@@ -132,51 +159,78 @@ class UserProfilePage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            'Username: $username',
+                          _buildInfoTile(context, 'Username', username),
+                          _buildInfoTile(context, 'Age', age),
+                          _buildInfoTile(context, 'Bio', bio),
+                          _buildInfoTile(context, 'Gender', gender),
+                          _buildInfoTile(
+                              context, 'Movie Preferences', moviePreferences),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Favorite Movies',
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 70,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            'Username: $username',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 70,
+                          const SizedBox(height: 8),
+                          if (favMovies.isEmpty)
+                            const Text('No favorite movies'),
+                          if (favMovies.isNotEmpty)
+                            FutureBuilder<List<dynamic>>(
+                              future: _fetchFavoriteMoviesDetails(favMovies),
+                              builder: (context, movieSnapshot) {
+                                if (movieSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                } else if (movieSnapshot.hasError) {
+                                  return Center(
+                                      child: Text(
+                                          'Error: ${movieSnapshot.error}',
+                                          style: const TextStyle(
+                                              color: Colors.white)));
+                                } else {
+                                  var movies = movieSnapshot.data!;
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: movies.length,
+                                    itemBuilder: (context, index) {
+                                      var movie = movies[index];
+                                      String? posterPath = movie['poster_path'];
+                                      String imageUrl = posterPath != null
+                                          ? 'https://image.tmdb.org/t/p/w500$posterPath'
+                                          : 'https://via.placeholder.com/500'; // A placeholder image URL
+                                      return ListTile(
+                                        leading: Image.network(imageUrl,
+                                            width: 50, fit: BoxFit.cover),
+                                        title: Text(
+                                          movie['title'],
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        subtitle: Text(
+                                            'Release Date: ${movie['release_date']}'),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MovieDetailPage(
+                                                      movieId: movie['id']),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                }
+                              },
                             ),
-                          ),
-                          Text(
-                            'Username: $username',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 70,
-                            ),
-                          ),
-                          Text(
-                            'Username: $username',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 70,
-                            ),
-                          ),
-                          Text(
-                            'Username: $username',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 70,
-                            ),
-                          ),
-                          Text(
-                            'Username: $username',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 70,
-                            ),
-                          ),
-                          // Add other user details here as needed
                         ],
                       ),
                     ),
@@ -187,6 +241,37 @@ class UserProfilePage extends StatelessWidget {
           );
         }
       },
+    );
+  }
+
+  Widget _buildInfoTile(BuildContext context, String label, String value) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              value.isNotEmpty ? value : '',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onBackground,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
