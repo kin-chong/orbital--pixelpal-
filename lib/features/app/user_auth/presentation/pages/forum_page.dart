@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/user_profile_page.dart';
 import 'package:pixelpal/global/common/toast.dart';
 import 'bottom_nav_bar.dart'; // Correct import path
 import 'no_animation_page_route.dart'; // Correct import path
@@ -468,23 +469,34 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        CircleAvatar(
-                                          backgroundColor: Colors.grey,
-                                          radius: 22,
-                                          backgroundImage: profilePic != null
-                                              ? MemoryImage(profilePic)
-                                              : null,
-                                          child: profilePic == null
-                                              ? Icon(
-                                                  FontAwesomeIcons.user,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .tertiary,
-                                                  size: 20,
-                                                )
-                                              : null,
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UserProfilePage(
+                                                        userId: commentUserId),
+                                              ),
+                                            );
+                                          },
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.grey,
+                                            radius: 22,
+                                            backgroundImage: profilePic != null
+                                                ? MemoryImage(profilePic)
+                                                : null,
+                                            child: profilePic == null
+                                                ? Icon(
+                                                    FontAwesomeIcons.user,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .tertiary,
+                                                    size: 20,
+                                                  )
+                                                : null,
+                                          ),
                                         ),
-
                                         const SizedBox(
                                             width:
                                                 12), // Increased spacing for better alignment
