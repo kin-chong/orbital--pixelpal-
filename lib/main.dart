@@ -18,6 +18,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'services/movie_service.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/welcome_page.dart'; // Import WelcomePage
+import 'package:google_generative_ai/google_generative_ai.dart'; // Import the Google Gemini API package
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,9 +31,16 @@ Future<void> main() async {
         projectId: "orbital-pixelpal",
       ),
     );
+    //const apiKey = 'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U';
+    final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: 'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U');
   } else {
     await Firebase.initializeApp();
   }
+
+  // Hardcoded API key
+ // const apiKey = 'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U';
+
+  final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: 'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U');
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
@@ -41,6 +49,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        Provider<GenerativeModel>(create: (_) => model),
       ],
       child: MyApp(isLoggedIn: isLoggedIn),
     ),
