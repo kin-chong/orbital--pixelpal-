@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
@@ -10,7 +9,12 @@ import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.da
 import 'package:pixelpal/features/app/user_auth/presentation/pages/no_animation_page_route.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
 import 'dart:io';
-import 'bottom_nav_bar.dart'; // Correct import path
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'dart:convert';
+import 'bottom_nav_bar.dart';
+import 'package:logging/logging.dart';
+
+const String _apiKey = 'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U'; // Replace with your actual API key
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -20,59 +24,138 @@ class ScanPage extends StatefulWidget {
 }
 
 class _ScanPageState extends State<ScanPage> {
+  final Logger _logger = Logger('ScanPage');
   File? _image;
   String _scannedText = "";
   TextEditingController _movieNameController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   TextEditingController _ticketPriceController = TextEditingController();
+  late final GenerativeModel _model;
 
-  Future<void> _getImageAndScan() async {
+  @override
+  void initState() {
+    super.initState();
+    _model = GenerativeModel(
+      model: 'gemini-1.5-flash',
+      apiKey: _apiKey,
+    );
+
+    // Set up logging
+    Logger.root.level = Level.ALL; // Log all levels
+    Logger.root.onRecord.listen((record) {
+      // Customize the output format
+      print('${record.level.name}: ${record.time}: ${record.message}');
+    });
+  }
+
+  Future<void> _pickImageFromGallery() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       final imageFile = File(pickedFile.path);
+      if (!mounted) return;
       setState(() {
         _image = imageFile;
       });
 
-      final inputImage = InputImage.fromFile(imageFile);
-      final textRecognizer =
-          TextRecognizer(script: TextRecognitionScript.latin);
-      final RecognizedText recognizedText =
-          await textRecognizer.processImage(inputImage);
-
-      String scannedText = recognizedText.text;
-      print('Scanned Text: $scannedText'); // Debug log
-      setState(() {
-        _scannedText = scannedText;
-      });
-
-      _extractTicketDetails(scannedText);
+      // Send the image to Google Gemini API
+      final apiResponse = await _sendImageToGemini(imageFile);
+      if (!mounted) return;
+      if (apiResponse != null) {
+        _extractTicketDetails(apiResponse);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to scan the ticket.')),
+        );
+      }
     } else {
-      print('No image selected.'); // Debug log
+      _logger.warning('No image selected.');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No image selected.')),
       );
     }
   }
 
-  void _extractTicketDetails(String scannedText) {
-    // Example regex patterns, adjust based on your actual ticket format
-    RegExp movieNamePattern = RegExp(r"\)\s*(.*)\s*\(", caseSensitive: false);
-    RegExp datePattern =
-        RegExp(r"DATE\s*:\s*(\d{2}\s*\w+\s*\d{4})", caseSensitive: false);
-    RegExp pricePattern =
-        RegExp(r"PRICE\s*\$\s*([0-9]+\.[0-9]{2})", caseSensitive: false);
+  Future<void> _getImageAndScan() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
-    String? movieName =
-        movieNamePattern.firstMatch(scannedText)?.group(1)?.trim();
-    String? date = datePattern.firstMatch(scannedText)?.group(1)?.trim();
-    String? ticketPrice =
-        pricePattern.firstMatch(scannedText)?.group(1)?.trim();
+    if (pickedFile != null) {
+      final imageFile = File(pickedFile.path);
+      if (!mounted) return;
+      setState(() {
+        _image = imageFile;
+      });
 
-    print(
-        'Extracted Details - Movie: $movieName, Date: $date, Price: $ticketPrice'); // Debug log
+      // Send the image to Google Gemini API
+      final apiResponse = await _sendImageToGemini(imageFile);
+      if (!mounted) return;
+      if (apiResponse != null) {
+        _extractTicketDetails(apiResponse);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to scan the ticket.')),
+        );
+      }
+    } else {
+      _logger.warning('No image selected.');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No image selected.')),
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>?> _sendImageToGemini(File image) async {
+    try {
+      _logger.info('Reading image bytes...');
+      final imageBytes = await image.readAsBytes();
+      _logger.info('Image bytes length: ${imageBytes.length}');
+
+      final prompt = "Tell me what movie name is it, what is the date and price of the movie ticket, and give me in json. If the movie name is incomplete, complete the name for me.";
+      final content = [
+        Content.multi([
+          TextPart(prompt),
+          DataPart('image/jpeg', imageBytes),
+        ])
+      ];
+
+      _logger.info('Sending request to Gemini API...');
+      final response = await _model.generateContent(content);
+      _logger.info('Response: ${response.text}');
+
+      if (response.text != null) {
+        _logger.info('Received response from Gemini API.');
+        try {
+          final jsonResponse = response.text!
+              .replaceAll('```json', '')
+              .replaceAll('```', '')
+              .trim();
+          return json.decode(jsonResponse) as Map<String, dynamic>;
+        } catch (e) {
+          _logger.severe('Error decoding response JSON: $e');
+        }
+      } else {
+        _logger.severe('Gemini API error: No response text.');
+      }
+    } catch (e) {
+      _logger.severe('Error sending image to Gemini API: $e');
+    }
+    return null;
+  }
+
+  void _extractTicketDetails(Map<String, dynamic> apiResponse) {
+    String? movieName = apiResponse['movie_name'];
+    String? date = apiResponse['date'];
+    String? ticketPrice = apiResponse['price'];
+
+    _logger.info('Extracted Details - Movie: $movieName, Date: $date, Price: $ticketPrice');
+
+    if (ticketPrice != null && ticketPrice.toLowerCase() == 'free') {
+      ticketPrice = '0 dollars';
+    }
 
     setState(() {
       _movieNameController.text = movieName ?? '';
@@ -99,12 +182,8 @@ class _ScanPageState extends State<ScanPage> {
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: _movieNameController,
-                    decoration: InputDecoration(labelText: 'Movie Name'),
+                    decoration: const InputDecoration(labelText: 'Movie Name'),
                   ),
-                  /* TextFormField(
-                    controller: _dateController,
-                    decoration: InputDecoration(labelText: 'Date'),
-                  ), */
                   GestureDetector(
                     onTap: () async {
                       DateTime? pickedDate = await showDatePicker(
@@ -116,6 +195,7 @@ class _ScanPageState extends State<ScanPage> {
                       if (pickedDate != null) {
                         String formattedDate =
                             DateFormat("dd MMM yyyy").format(pickedDate);
+                        if (!mounted) return;
                         setState(() {
                           _dateController.text = formattedDate;
                         });
@@ -124,13 +204,13 @@ class _ScanPageState extends State<ScanPage> {
                     child: AbsorbPointer(
                       child: TextFormField(
                         controller: _dateController,
-                        decoration: InputDecoration(labelText: 'Date'),
+                        decoration: const InputDecoration(labelText: 'Date'),
                       ),
                     ),
                   ),
                   TextFormField(
                     controller: _ticketPriceController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Price',
                       prefixText: '\$ ',
                     ),
@@ -177,10 +257,10 @@ class _ScanPageState extends State<ScanPage> {
 
         // Add error handling for upload task
         uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
-          print(
-              'Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
+          _logger.info('Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
         }, onError: (e) {
-          print('Error during upload: $e'); // Debug log
+          _logger.severe('Error during upload: $e');
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error during upload: $e')),
           );
@@ -188,7 +268,7 @@ class _ScanPageState extends State<ScanPage> {
 
         TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => {});
         String imageUrl = await taskSnapshot.ref.getDownloadURL();
-        print('Image URL: $imageUrl'); // Debug log
+        _logger.info('Image URL: $imageUrl');
 
         // Save the ticket details to Firestore
         CollectionReference tickets =
@@ -201,23 +281,24 @@ class _ScanPageState extends State<ScanPage> {
           'image_url': imageUrl,
           'timestamp': FieldValue.serverTimestamp(),
         });
-        print(
-            'Ticket saved: ${_movieNameController.text}, ${_dateController.text}, ${_ticketPriceController.text}, $imageUrl'); // Debug log
+        _logger.info('Ticket saved: ${_movieNameController.text}, ${_dateController.text}, ${_ticketPriceController.text}, $imageUrl');
 
         // Show a success message or navigate to another screen
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Ticket saved successfully!')),
         );
       } catch (e) {
-        print('Error saving ticket: $e'); // Debug log
+        _logger.severe('Error saving ticket: $e');
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error saving ticket: $e')),
         );
       }
     } else {
-      print('Failed to save ticket. Missing details.');
-      print(
-          'Image: $_image, Movie: ${_movieNameController.text}, Date: ${_dateController.text}, Price: ${_ticketPriceController.text}'); // Debug log
+      _logger.warning('Failed to save ticket. Missing details.');
+      _logger.info('Image: $_image, Movie: ${_movieNameController.text}, Date: ${_dateController.text}, Price: ${_ticketPriceController.text}');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text('Failed to save ticket. Missing details.')),
@@ -242,9 +323,18 @@ class _ScanPageState extends State<ScanPage> {
         automaticallyImplyLeading: false,
         title: const Text('Scan Movie Ticket'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.camera_alt),
-            onPressed: _getImageAndScan,
+          PopupMenuButton<int>(
+            onSelected: (item) => _onMenuItemSelected(item),
+            itemBuilder: (context) => [
+              const PopupMenuItem<int>(
+                value: 0,
+                child: Text('Take a Picture'),
+              ),
+              const PopupMenuItem<int>(
+                value: 1,
+                child: Text('Choose from Gallery'),
+              ),
+            ],
           ),
         ],
       ),
@@ -320,27 +410,42 @@ class _ScanPageState extends State<ScanPage> {
               case 0:
                 Navigator.pushReplacement(
                   context,
-                  NoAnimationPageRoute(page: FrontPage()),
+                  NoAnimationPageRoute(page: const FrontPage()),
                 );
+                break;
               case 1:
                 Navigator.pushReplacement(
                   context,
-                  NoAnimationPageRoute(page: ScanPage()),
+                  NoAnimationPageRoute(page: const ScanPage()),
                 );
+                break;
               case 2:
                 Navigator.pushReplacement(
                   context,
-                  NoAnimationPageRoute(page: ForumPage()),
+                  NoAnimationPageRoute(page: const ForumPage()),
                 );
+                break;
               case 3:
                 Navigator.pushReplacement(
                   context,
                   NoAnimationPageRoute(page: ProfileMenu()),
                 );
+                break;
             }
           }
         },
       ),
     );
+  }
+
+  void _onMenuItemSelected(int item) {
+    switch (item) {
+      case 0:
+        _getImageAndScan();
+        break;
+      case 1:
+        _pickImageFromGallery();
+        break;
+    }
   }
 }
