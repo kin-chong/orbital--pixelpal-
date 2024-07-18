@@ -51,4 +51,30 @@ class MovieService {
     }
     return movies;
   }
+
+  Future<List<dynamic>> searchMovies(String query) async {
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/search/movie?api_key=$_apiKey&query=$query&language=en-US&page=1'));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body)['results'];
+    } else {
+      throw Exception('Failed to load search results');
+    }
+  }
+
+  Future<String?> searchMoviePoster(String movieName) async {
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/search/movie?api_key=$_apiKey&query=$movieName&language=en-US&page=1'));
+
+    if (response.statusCode == 200) {
+      final results = json.decode(response.body)['results'];
+      if (results.isNotEmpty) {
+        return 'https://image.tmdb.org/t/p/w500${results[0]['poster_path']}';
+      }
+    } else {
+      throw Exception('Failed to search movie');
+    }
+    return null;
+  }
 }
