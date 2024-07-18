@@ -15,7 +15,8 @@ import 'bottom_nav_bar.dart';
 import 'package:logging/logging.dart';
 import 'package:pixelpal/services/movie_service.dart';
 
-const String _apiKey = 'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U'; // Replace with your actual API key
+const String _apiKey =
+    'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U'; // Replace with your actual API key
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -115,7 +116,8 @@ class _ScanPageState extends State<ScanPage> {
       final imageBytes = await image.readAsBytes();
       _logger.info('Image bytes length: ${imageBytes.length}');
 
-      final prompt = "Tell me what movie name is it, what is the date and price of the movie ticket, and give me in json. If the movie name is incomplete, complete the name for me.";
+      final prompt =
+          "Tell me what movie name is it, what is the date (in dd MMM yyyy format) and price (omit the leading dollar sign) of the movie ticket, and give me in json. If the movie name is incomplete, complete the name for me.";
       final content = [
         Content.multi([
           TextPart(prompt),
@@ -152,7 +154,8 @@ class _ScanPageState extends State<ScanPage> {
     String? date = apiResponse['date'];
     String? ticketPrice = apiResponse['price'];
 
-    _logger.info('Extracted Details - Movie: $movieName, Date: $date, Price: $ticketPrice');
+    _logger.info(
+        'Extracted Details - Movie: $movieName, Date: $date, Price: $ticketPrice');
 
     if (ticketPrice != null && ticketPrice.toLowerCase() == 'free') {
       ticketPrice = '0 dollars';
@@ -258,7 +261,8 @@ class _ScanPageState extends State<ScanPage> {
 
         // Add error handling for upload task
         uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
-          _logger.info('Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
+          _logger.info(
+              'Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
         }, onError: (e) {
           _logger.severe('Error during upload: $e');
           if (!mounted) return;
@@ -282,7 +286,8 @@ class _ScanPageState extends State<ScanPage> {
           'image_url': imageUrl,
           'timestamp': FieldValue.serverTimestamp(),
         });
-        _logger.info('Ticket saved: ${_movieNameController.text}, ${_dateController.text}, ${_ticketPriceController.text}, $imageUrl');
+        _logger.info(
+            'Ticket saved: ${_movieNameController.text}, ${_dateController.text}, ${_ticketPriceController.text}, $imageUrl');
 
         // Show a success message or navigate to another screen
         if (!mounted) return;
@@ -298,7 +303,8 @@ class _ScanPageState extends State<ScanPage> {
       }
     } else {
       _logger.warning('Failed to save ticket. Missing details.');
-      _logger.info('Image: $_image, Movie: ${_movieNameController.text}, Date: ${_dateController.text}, Price: ${_ticketPriceController.text}');
+      _logger.info(
+          'Image: $_image, Movie: ${_movieNameController.text}, Date: ${_dateController.text}, Price: ${_ticketPriceController.text}');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -358,7 +364,8 @@ class _ScanPageState extends State<ScanPage> {
                 var ticket = snapshot.data!.docs[index];
                 var data = ticket.data() as Map<String, dynamic>;
                 return GestureDetector(
-                  onTap: () => _navigateToTicketDetail(context, data, ticket.id),
+                  onTap: () =>
+                      _navigateToTicketDetail(context, data, ticket.id),
                   child: GridTile(
                     child: Column(
                       children: [
@@ -370,7 +377,8 @@ class _ScanPageState extends State<ScanPage> {
                                   errorBuilder: (context, error, stackTrace) =>
                                       Container(
                                     color: Colors.grey,
-                                    child: Center(child: Icon(Icons.broken_image)),
+                                    child:
+                                        Center(child: Icon(Icons.broken_image)),
                                   ),
                                 )
                               : Container(color: Colors.grey),
@@ -382,10 +390,12 @@ class _ScanPageState extends State<ScanPage> {
                             children: [
                               Text(
                                 data['movie_name'] ?? 'Unknown',
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
                               Text('Date: ${data['date'] ?? 'Unknown'}'),
-                              Text('Price: \$${data['ticket_price'] ?? 'Unknown'}'),
+                              Text(
+                                  'Price: \$${data['ticket_price'] ?? 'Unknown'}'),
                             ],
                           ),
                         ),
@@ -434,11 +444,13 @@ class _ScanPageState extends State<ScanPage> {
     );
   }
 
-  void _navigateToTicketDetail(BuildContext context, Map<String, dynamic> ticketData, String ticketId) {
+  void _navigateToTicketDetail(
+      BuildContext context, Map<String, dynamic> ticketData, String ticketId) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TicketDetailPage(ticketData: ticketData, ticketId: ticketId),
+        builder: (context) =>
+            TicketDetailPage(ticketData: ticketData, ticketId: ticketId),
       ),
     );
   }
@@ -465,7 +477,8 @@ class _TicketDetailPageState extends State<TicketDetailPage> {
   }
 
   Future<void> _fetchMoviePoster() async {
-    final posterUrl = await _movieService.searchMoviePoster(widget.ticketData['movie_name']);
+    final posterUrl =
+        await _movieService.searchMoviePoster(widget.ticketData['movie_name']);
     if (posterUrl != null) {
       setState(() {
         _posterUrl = posterUrl;
@@ -482,7 +495,10 @@ class _TicketDetailPageState extends State<TicketDetailPage> {
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () async {
-              await FirebaseFirestore.instance.collection('tickets').doc(widget.ticketId).delete();
+              await FirebaseFirestore.instance
+                  .collection('tickets')
+                  .doc(widget.ticketId)
+                  .delete();
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Ticket deleted successfully.')),
@@ -529,7 +545,8 @@ class _TicketDetailPageState extends State<TicketDetailPage> {
               const SizedBox(height: 10),
               Text('Date: ${widget.ticketData['date'] ?? 'Unknown'}'),
               const SizedBox(height: 10),
-              Text('Price: \$${widget.ticketData['ticket_price'] ?? 'Unknown'}'),
+              Text(
+                  'Price: \$${widget.ticketData['ticket_price'] ?? 'Unknown'}'),
             ],
           ),
         ),
