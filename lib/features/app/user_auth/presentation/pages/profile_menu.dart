@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/chat_overview.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/no_animation_page_route.dart';
@@ -235,9 +236,9 @@ class _ProfileMenuState extends State<ProfileMenu> {
         },
       ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 3,
+        currentIndex: 4,
         onTap: (index) {
-          if (index != 3) {
+          if (index != 4) {
             switch (index) {
               case 0:
                 Navigator.pushReplacement(
@@ -255,6 +256,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
                   NoAnimationPageRoute(page: ForumPage()),
                 );
               case 3:
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ChatOverview()),
+                );
+              case 4:
                 Navigator.pushReplacement(
                   context,
                   NoAnimationPageRoute(page: ProfileMenu()),

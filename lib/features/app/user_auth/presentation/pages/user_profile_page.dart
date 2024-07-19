@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/message.dart';
 import 'package:pixelpal/services/movie_service.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/movie_detail_page.dart';
 
 class UserProfilePage extends StatelessWidget {
   final String userId;
+  final String currentUserId; // Add this parameter
   final MovieService _movieService = MovieService(); // Instantiate MovieService
 
-  UserProfilePage({super.key, required this.userId});
+  UserProfilePage(
+      {super.key, required this.userId, required this.currentUserId});
 
   Future<Map<String, dynamic>> _getUserDetails(String userId) async {
     try {
@@ -100,6 +103,11 @@ class UserProfilePage extends StatelessWidget {
           var moviePreferences = userDetails['moviePreferences'];
           var favMovies = userDetails['favMovies'] as List<int>;
 
+          // Define gradient colors based on the current theme
+          var gradientColors = Theme.of(context).brightness == Brightness.dark
+              ? [Colors.transparent, Colors.black.withOpacity(0.7)]
+              : [Colors.transparent, Colors.white.withOpacity(0.7)];
+
           return Scaffold(
             body: CustomScrollView(
               slivers: [
@@ -107,17 +115,16 @@ class UserProfilePage extends StatelessWidget {
                   expandedHeight: 400.0,
                   pinned: true,
                   flexibleSpace: FlexibleSpaceBar(
-                    title: Text(username),
+                    title: Text(
+                      username,
+                    ),
                     background: profilePic != null
                         ? ShaderMask(
                             shaderCallback: (rect) {
                               return LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.7),
-                                ],
+                                colors: gradientColors,
                               ).createShader(
                                   Rect.fromLTRB(0, 0, rect.width, rect.height));
                             },
@@ -132,10 +139,7 @@ class UserProfilePage extends StatelessWidget {
                               return LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.7),
-                                ],
+                                colors: gradientColors,
                               ).createShader(
                                   Rect.fromLTRB(0, 0, rect.width, rect.height));
                             },
@@ -167,7 +171,28 @@ class UserProfilePage extends StatelessWidget {
                           _buildInfoTile(context, 'Gender', gender),
                           _buildInfoTile(
                               context, 'Movie Preferences', moviePreferences),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 10),
+                          if (userId !=
+                              currentUserId) // Check if not the current user's profile
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all<
+                                          Color>(
+                                      Theme.of(context).colorScheme.secondary)),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MessagePage(
+                                      receiverID: userId,
+                                      receiverUsername: username,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: const Text('Message'),
+                            ),
+                          const SizedBox(height: 40),
                           const Text(
                             'Favorite Movies',
                             style: TextStyle(
@@ -256,7 +281,7 @@ class UserProfilePage extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.secondary,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

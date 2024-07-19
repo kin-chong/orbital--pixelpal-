@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/chat_overview.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/movie_detail_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
@@ -22,7 +23,8 @@ class _FrontPageState extends State<FrontPage>
   final MovieService _movieService = MovieService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final BehaviorSubject<List<dynamic>> _searchResultsSubject = BehaviorSubject<List<dynamic>>();
+  final BehaviorSubject<List<dynamic>> _searchResultsSubject =
+      BehaviorSubject<List<dynamic>>();
   Future<List<dynamic>>? _upcomingMovies;
   Future<List<dynamic>>? _currentlyShowingMovies;
   Future<List<dynamic>>? _searchResults;
@@ -79,10 +81,12 @@ class _FrontPageState extends State<FrontPage>
                   autofocus: true,
                   decoration: InputDecoration(
                     hintText: 'Search movies...',
-                    prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.tertiary),
+                    prefixIcon: Icon(Icons.search,
+                        color: Theme.of(context).colorScheme.tertiary),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.tertiary),
+                            icon: Icon(Icons.clear,
+                                color: Theme.of(context).colorScheme.tertiary),
                             onPressed: () {
                               _searchController.clear();
                               _searchResultsSubject.add([]);
@@ -93,11 +97,13 @@ class _FrontPageState extends State<FrontPage>
                 )
               : Text(
                   'PixelPal',
-                  style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
                 ),
           actions: [
             IconButton(
-              icon: Icon(_isSearchActive ? Icons.close : Icons.search, color: Theme.of(context).colorScheme.tertiary),
+              icon: Icon(_isSearchActive ? Icons.close : Icons.search,
+                  color: Theme.of(context).colorScheme.tertiary),
               onPressed: () {
                 setState(() {
                   _isSearchActive = !_isSearchActive;
@@ -141,32 +147,34 @@ class _FrontPageState extends State<FrontPage>
         bottomNavigationBar: BottomNavBar(
           currentIndex: 0,
           onTap: (index) {
-            // Navigate to the appropriate page
-            switch (index) {
-              case 0:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: FrontPage()),
-                );
-                break;
-              case 1:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: ScanPage()),
-                );
-                break;
-              case 2:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: ForumPage()),
-                );
-                break;
-              case 3:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: ProfileMenu()),
-                );
-                break;
+            if (index != 0) {
+              switch (index) {
+                case 0:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: FrontPage()),
+                  );
+                case 1:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ScanPage()),
+                  );
+                case 2:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ForumPage()),
+                  );
+                case 3:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ChatOverview()),
+                  );
+                case 4:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ProfileMenu()),
+                  );
+              }
             }
           },
         ),
@@ -191,7 +199,8 @@ class _FrontPageState extends State<FrontPage>
               return Center(
                 child: Text(
                   'No results found',
-                  style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
                 ),
               );
             } else {
@@ -206,8 +215,12 @@ class _FrontPageState extends State<FrontPage>
 
                   return ListTile(
                     leading: Image.network(imageUrl, width: 50),
-                    title: Text(movie['title'], style: TextStyle(color: Theme.of(context).colorScheme.tertiary)),
-                    subtitle: Text('Release Date: ${movie['release_date']}', style: TextStyle(color: Theme.of(context).colorScheme.tertiary)),
+                    title: Text(movie['title'],
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.tertiary)),
+                    subtitle: Text('Release Date: ${movie['release_date']}',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.tertiary)),
                     onTap: () {
                       Navigator.push(
                         context,
