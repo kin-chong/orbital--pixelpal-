@@ -55,11 +55,31 @@ class _ChatOverviewState extends State<ChatOverview> {
       String otherUsername = userSnapshot['username'];
       Uint8List? profilePic = await _getProfilePic(otherUserID);
 
+      QuerySnapshot messagesSnapshot = await _firestore
+          .collection('chat_rooms')
+          .doc(chatRoom.id)
+          .collection('messages')
+          .orderBy('timestamp', descending: true)
+          .limit(1)
+          .get();
+
+      String recentMessage = '';
+      if (messagesSnapshot.docs.isNotEmpty) {
+        var messageData =
+            messagesSnapshot.docs.first.data() as Map<String, dynamic>;
+        if (messageData['senderID'] == currentUserID) {
+          recentMessage = 'You: ${messageData['message']}';
+        } else {
+          recentMessage = messageData['message'];
+        }
+      }
+
       chatRoomDetails.add({
         'chatRoomID': chatRoom.id,
         'otherUserID': otherUserID,
         'otherUsername': otherUsername,
         'profilePic': profilePic,
+        'recentMessage': recentMessage,
       });
     }
 
@@ -141,27 +161,45 @@ class _ChatOverviewState extends State<ChatOverview> {
               itemBuilder: (context, index) {
                 Map<String, dynamic> chatRoom = snapshot.data![index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0), // Adjust the vertical padding as needed
                   child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 25,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      child: chatRoom['profilePic'] != null
-                          ? ClipOval(
-                              child: Image.memory(
-                                chatRoom['profilePic'],
-                                fit: BoxFit.cover,
-                                width: 50,
-                                height: 50,
+                    leading: Container(
+                      padding: const EdgeInsets.all(1.0), // Border width
+                      decoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary, // Border color
+                        shape: BoxShape.circle,
+                      ),
+                      child: CircleAvatar(
+                        radius: 25,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
+                        child: chatRoom['profilePic'] != null
+                            ? ClipOval(
+                                child: Image.memory(
+                                  chatRoom['profilePic'],
+                                  fit: BoxFit.cover,
+                                  width: 50,
+                                  height: 50,
+                                ),
+                              )
+                            : Icon(
+                                FontAwesomeIcons.user,
+                                color: Theme.of(context).colorScheme.tertiary,
+                                size: 25,
                               ),
-                            )
-                          : Icon(
-                              FontAwesomeIcons.user,
-                              color: Theme.of(context).colorScheme.tertiary,
-                              size: 25,
-                            ),
+                      ),
                     ),
-                    title: Text(chatRoom['otherUsername']),
+                    title: Text(
+                      chatRoom['otherUsername'],
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      chatRoom['recentMessage'],
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,
