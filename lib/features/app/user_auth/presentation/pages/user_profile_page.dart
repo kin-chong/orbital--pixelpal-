@@ -176,7 +176,7 @@ class UserProfilePage extends StatelessWidget {
                               currentUserId) // Check if not the current user's profile
                             ElevatedButton(
                               style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all<
+                                  backgroundColor: WidgetStateProperty.all<
                                           Color>(
                                       Theme.of(context).colorScheme.secondary)),
                               onPressed: () {

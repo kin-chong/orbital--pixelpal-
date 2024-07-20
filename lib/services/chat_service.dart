@@ -31,6 +31,11 @@ class ChatService {
           .collection("messages")
           .add(newMessage.toMap());
 
+      await _firestore.collection("chat_rooms").doc(chatRoomID).set({
+        'user1': ids[0],
+        'user2': ids[1],
+      }, SetOptions(merge: true));
+
       print("Message sent successfully!");
     } catch (e) {
       print("Failed to send message: $e");
