@@ -23,8 +23,7 @@ class _FrontPageState extends State<FrontPage>
   final MovieService _movieService = MovieService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final BehaviorSubject<List<dynamic>> _searchResultsSubject =
-      BehaviorSubject<List<dynamic>>();
+  final BehaviorSubject<List<dynamic>> _searchResultsSubject = BehaviorSubject<List<dynamic>>();
   Future<List<dynamic>>? _upcomingMovies;
   Future<List<dynamic>>? _currentlyShowingMovies;
   Future<List<dynamic>>? _searchResults;
@@ -81,12 +80,10 @@ class _FrontPageState extends State<FrontPage>
                   autofocus: true,
                   decoration: InputDecoration(
                     hintText: 'Search movies...',
-                    prefixIcon: Icon(Icons.search,
-                        color: Theme.of(context).colorScheme.tertiary),
+                    prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.tertiary),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: Icon(Icons.clear,
-                                color: Theme.of(context).colorScheme.tertiary),
+                            icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.tertiary),
                             onPressed: () {
                               _searchController.clear();
                               _searchResultsSubject.add([]);
@@ -97,13 +94,11 @@ class _FrontPageState extends State<FrontPage>
                 )
               : Text(
                   'PixelPal',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                  style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
                 ),
           actions: [
             IconButton(
-              icon: Icon(_isSearchActive ? Icons.close : Icons.search,
-                  color: Theme.of(context).colorScheme.tertiary),
+              icon: Icon(_isSearchActive ? Icons.close : Icons.search, color: Theme.of(context).colorScheme.tertiary),
               onPressed: () {
                 setState(() {
                   _isSearchActive = !_isSearchActive;
@@ -199,8 +194,7 @@ class _FrontPageState extends State<FrontPage>
               return Center(
                 child: Text(
                   'No results found',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                  style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
                 ),
               );
             } else {
