@@ -29,6 +29,7 @@ dependencies:
   firebase_auth_mocks: ^0.13.0
   google_generative_ai: ^0.4.3
   rxdart: ^0.28.0
+  flutter_pw_validator: ^1.6.0
 
 dev_dependencies:
   flutter_test:
