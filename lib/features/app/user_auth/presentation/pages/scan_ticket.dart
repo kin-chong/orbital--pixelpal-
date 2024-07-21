@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/chat_overview.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/no_animation_page_route.dart';
@@ -13,8 +14,10 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'dart:convert';
 import 'bottom_nav_bar.dart';
 import 'package:logging/logging.dart';
+import 'package:pixelpal/services/movie_service.dart';
 
-const String _apiKey = 'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U'; // Replace with your actual API key
+const String _apiKey =
+    'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U'; // Replace with your actual API key
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -114,7 +117,8 @@ class _ScanPageState extends State<ScanPage> {
       final imageBytes = await image.readAsBytes();
       _logger.info('Image bytes length: ${imageBytes.length}');
 
-      final prompt = "Tell me what movie name is it, what is the date and price of the movie ticket, and give me in json. If the movie name is incomplete, complete the name for me.";
+      final prompt =
+          "Tell me what movie name is it, what is the date (in dd MMM yyyy format) and price (omit the leading dollar sign) of the movie ticket, and give me in json. If the movie name is incomplete, complete the name for me.";
       final content = [
         Content.multi([
           TextPart(prompt),
@@ -151,7 +155,8 @@ class _ScanPageState extends State<ScanPage> {
     String? date = apiResponse['date'];
     String? ticketPrice = apiResponse['price'];
 
-    _logger.info('Extracted Details - Movie: $movieName, Date: $date, Price: $ticketPrice');
+    _logger.info(
+        'Extracted Details - Movie: $movieName, Date: $date, Price: $ticketPrice');
 
     if (ticketPrice != null && ticketPrice.toLowerCase() == 'free') {
       ticketPrice = '0 dollars';
@@ -257,7 +262,8 @@ class _ScanPageState extends State<ScanPage> {
 
         // Add error handling for upload task
         uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
-          _logger.info('Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
+          _logger.info(
+              'Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
         }, onError: (e) {
           _logger.severe('Error during upload: $e');
           if (!mounted) return;
@@ -281,7 +287,8 @@ class _ScanPageState extends State<ScanPage> {
           'image_url': imageUrl,
           'timestamp': FieldValue.serverTimestamp(),
         });
-        _logger.info('Ticket saved: ${_movieNameController.text}, ${_dateController.text}, ${_ticketPriceController.text}, $imageUrl');
+        _logger.info(
+            'Ticket saved: ${_movieNameController.text}, ${_dateController.text}, ${_ticketPriceController.text}, $imageUrl');
 
         // Show a success message or navigate to another screen
         if (!mounted) return;
@@ -297,7 +304,8 @@ class _ScanPageState extends State<ScanPage> {
       }
     } else {
       _logger.warning('Failed to save ticket. Missing details.');
-      _logger.info('Image: $_image, Movie: ${_movieNameController.text}, Date: ${_dateController.text}, Price: ${_ticketPriceController.text}');
+      _logger.info(
+          'Image: $_image, Movie: ${_movieNameController.text}, Date: ${_dateController.text}, Price: ${_ticketPriceController.text}');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -319,22 +327,18 @@ class _ScanPageState extends State<ScanPage> {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Scan Movie Ticket'),
+        leading: IconButton(
+          icon: Icon(Icons.photo_library),
+          onPressed: _pickImageFromGallery,
+        ),
         actions: [
-          PopupMenuButton<int>(
-            onSelected: (item) => _onMenuItemSelected(item),
-            itemBuilder: (context) => [
-              const PopupMenuItem<int>(
-                value: 0,
-                child: Text('Take a Picture'),
-              ),
-              const PopupMenuItem<int>(
-                value: 1,
-                child: Text('Choose from Gallery'),
-              ),
-            ],
+          IconButton(
+            icon: Icon(Icons.camera_alt),
+            onPressed: _getImageAndScan,
           ),
         ],
       ),
@@ -361,40 +365,44 @@ class _ScanPageState extends State<ScanPage> {
               itemBuilder: (context, index) {
                 var ticket = snapshot.data!.docs[index];
                 var data = ticket.data() as Map<String, dynamic>;
-                return GridTile(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: data['image_url'] != null
-                            ? Image.network(
-                                data['image_url'],
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                  color: Colors.grey,
-                                  child:
-                                      Center(child: Icon(Icons.broken_image)),
-                                ),
-                              )
-                            : Container(color: Colors.grey),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              data['movie_name'] ?? 'Unknown',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text('Date: ${data['date'] ?? 'Unknown'}'),
-                            Text(
-                                'Price: \$${data['ticket_price'] ?? 'Unknown'}'),
-                          ],
+                return GestureDetector(
+                  onTap: () =>
+                      _navigateToTicketDetail(context, data, ticket.id),
+                  child: GridTile(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: data['image_url'] != null
+                              ? Image.network(
+                                  data['image_url'],
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Container(
+                                    color: Colors.grey,
+                                    child:
+                                        Center(child: Icon(Icons.broken_image)),
+                                  ),
+                                )
+                              : Container(color: Colors.grey),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                data['movie_name'] ?? 'Unknown',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text('Date: ${data['date'] ?? 'Unknown'}'),
+                              Text(
+                                  'Price: \$${data['ticket_price'] ?? 'Unknown'}'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -428,6 +436,11 @@ class _ScanPageState extends State<ScanPage> {
               case 3:
                 Navigator.pushReplacement(
                   context,
+                  NoAnimationPageRoute(page: ChatOverview()),
+                );
+              case 4:
+                Navigator.pushReplacement(
+                  context,
                   NoAnimationPageRoute(page: ProfileMenu()),
                 );
                 break;
@@ -438,14 +451,113 @@ class _ScanPageState extends State<ScanPage> {
     );
   }
 
-  void _onMenuItemSelected(int item) {
-    switch (item) {
-      case 0:
-        _getImageAndScan();
-        break;
-      case 1:
-        _pickImageFromGallery();
-        break;
+  void _navigateToTicketDetail(
+      BuildContext context, Map<String, dynamic> ticketData, String ticketId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            TicketDetailPage(ticketData: ticketData, ticketId: ticketId),
+      ),
+    );
+  }
+}
+
+class TicketDetailPage extends StatefulWidget {
+  final Map<String, dynamic> ticketData;
+  final String ticketId;
+
+  const TicketDetailPage({required this.ticketData, required this.ticketId});
+
+  @override
+  _TicketDetailPageState createState() => _TicketDetailPageState();
+}
+
+class _TicketDetailPageState extends State<TicketDetailPage> {
+  final MovieService _movieService = MovieService();
+  String? _posterUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMoviePoster();
+  }
+
+  Future<void> _fetchMoviePoster() async {
+    final posterUrl =
+        await _movieService.searchMoviePoster(widget.ticketData['movie_name']);
+    if (posterUrl != null) {
+      setState(() {
+        _posterUrl = posterUrl;
+      });
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.ticketData['movie_name'] ?? 'Ticket Detail'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () async {
+              await FirebaseFirestore.instance
+                  .collection('tickets')
+                  .doc(widget.ticketId)
+                  .delete();
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Ticket deleted successfully.')),
+              );
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (widget.ticketData['image_url'] != null)
+                Center(
+                  child: Image.network(
+                    widget.ticketData['image_url'],
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey,
+                      child: Center(child: Icon(Icons.broken_image)),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 10),
+              if (_posterUrl != null)
+                Center(
+                  child: Image.network(
+                    _posterUrl!,
+                    fit: BoxFit.cover,
+                    height: 300,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey,
+                      child: Center(child: Icon(Icons.broken_image)),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 10),
+              Text(
+                'Movie: ${widget.ticketData['movie_name'] ?? 'Unknown'}',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Text('Date: ${widget.ticketData['date'] ?? 'Unknown'}'),
+              const SizedBox(height: 10),
+              Text(
+                  'Price: \$${widget.ticketData['ticket_price'] ?? 'Unknown'}'),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -11,6 +11,7 @@ class FormContainerWidget extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final ValueChanged<String>? onFieldSubmitted;
   final TextInputType? inputType;
+  final FocusNode? focusNode;
 
   const FormContainerWidget({
     super.key,
@@ -24,6 +25,7 @@ class FormContainerWidget extends StatefulWidget {
     this.validator,
     this.onFieldSubmitted,
     this.inputType,
+    this.focusNode,
   });
 
   @override
@@ -43,6 +45,7 @@ class _FormContainerWidgetState extends State<FormContainerWidget> {
         borderRadius: BorderRadius.circular(5),
       ),
       child: TextFormField(
+        focusNode: widget.focusNode,
         style: TextStyle(color: Theme.of(context).colorScheme.secondary),
         controller: widget.controller,
         keyboardType: widget.inputType,

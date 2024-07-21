@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/chat_overview.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/movie_detail_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
@@ -8,6 +9,7 @@ import 'package:pixelpal/features/app/user_auth/presentation/pages/no_animation_
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.dart';
 import 'package:pixelpal/services/movie_service.dart';
+import 'package:rxdart/rxdart.dart';
 
 class FrontPage extends StatefulWidget {
   const FrontPage({super.key});
@@ -21,21 +23,46 @@ class _FrontPageState extends State<FrontPage>
   final MovieService _movieService = MovieService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+  final BehaviorSubject<List<dynamic>> _searchResultsSubject = BehaviorSubject<List<dynamic>>();
   Future<List<dynamic>>? _upcomingMovies;
   Future<List<dynamic>>? _currentlyShowingMovies;
+  Future<List<dynamic>>? _searchResults;
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearchActive = false;
 
   @override
   void initState() {
     super.initState();
     _upcomingMovies = _movieService.fetchUpcomingMovies();
     _currentlyShowingMovies = _movieService.fetchCurrentlyShowingMovies();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _searchResultsSubject.close();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    _performSearch(_searchController.text);
   }
 
   Future<void> _refreshUpcomingMovies() async {
     setState(() {
       _upcomingMovies = _movieService.fetchUpcomingMovies();
     });
+  }
+
+  void _performSearch(String query) async {
+    if (query.isEmpty) {
+      _searchResultsSubject.add([]);
+    } else {
+      var results = await _movieService.searchMovies(query);
+      _searchResultsSubject.add(results);
+    }
   }
 
   @override
@@ -47,59 +74,160 @@ class _FrontPageState extends State<FrontPage>
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.surface,
           automaticallyImplyLeading: false,
-          title: Text(
-            'PixelPal',
-            style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(48.0),
-            child: Container(
-              color: Theme.of(context).colorScheme.surface,
-              child: TabBar(
-                indicatorColor: Colors.pinkAccent,
-                labelColor: Theme.of(context).colorScheme.tertiary,
-                unselectedLabelColor: Theme.of(context).colorScheme.tertiary,
-                tabs: const [
-                  Tab(text: 'Upcoming'),
-                  Tab(text: 'Popular'),
-                  Tab(text: 'Favorites'),
-                ],
-              ),
+          title: _isSearchActive
+              ? TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: 'Search movies...',
+                    prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.tertiary),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.tertiary),
+                            onPressed: () {
+                              _searchController.clear();
+                              _searchResultsSubject.add([]);
+                            },
+                          )
+                        : null,
+                  ),
+                )
+              : Text(
+                  'PixelPal',
+                  style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                ),
+          actions: [
+            IconButton(
+              icon: Icon(_isSearchActive ? Icons.close : Icons.search, color: Theme.of(context).colorScheme.tertiary),
+              onPressed: () {
+                setState(() {
+                  _isSearchActive = !_isSearchActive;
+                  if (!_isSearchActive) {
+                    _searchController.clear();
+                    _searchResultsSubject.add([]);
+                  }
+                });
+              },
             ),
-          ),
+          ],
+          bottom: _isSearchActive
+              ? null
+              : PreferredSize(
+                  preferredSize: const Size.fromHeight(48.0),
+                  child: Container(
+                    color: Theme.of(context).colorScheme.surface,
+                    child: const TabBar(
+                      indicatorColor: Colors.pinkAccent,
+                      tabs: [
+                        Tab(text: 'Upcoming'),
+                        Tab(text: 'Popular'),
+                        Tab(text: 'Favorites'),
+                      ],
+                    ),
+                  ),
+                ),
         ),
-        body: TabBarView(
+        body: Stack(
           children: [
-            _buildUpcomingMoviesList(),
-            _buildPopularMoviesList(),
-            FavoritesTab(),
+            TabBarView(
+              children: [
+                _buildUpcomingMoviesList(),
+                _buildPopularMoviesList(),
+                FavoritesTab(),
+              ],
+            ),
+            _isSearchActive ? _buildSearchResultsOverlay() : Container(),
           ],
         ),
         bottomNavigationBar: BottomNavBar(
           currentIndex: 0,
           onTap: (index) {
-            // Navigate to the appropriate page
-            switch (index) {
-              case 0:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: FrontPage()),
-                );
-              case 1:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: ScanPage()),
-                );
-              case 2:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: ForumPage()),
-                );
-              case 3:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: ProfileMenu()),
-                );
+            if (index != 0) {
+              switch (index) {
+                case 0:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: FrontPage()),
+                  );
+                case 1:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ScanPage()),
+                  );
+                case 2:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ForumPage()),
+                  );
+                case 3:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ChatOverview()),
+                  );
+                case 4:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ProfileMenu()),
+                  );
+              }
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchResultsOverlay() {
+    return Positioned.fill(
+      child: Container(
+        color: Colors.black.withOpacity(0.8),
+        child: StreamBuilder<List<dynamic>>(
+          stream: _searchResultsSubject.stream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
+                  child: Text('Error: ${snapshot.error}',
+                      style: const TextStyle(color: Colors.white)));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(
+                child: Text(
+                  'No results found',
+                  style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                ),
+              );
+            } else {
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  var movie = snapshot.data![index];
+                  String? posterPath = movie['poster_path'];
+                  String imageUrl = posterPath != null
+                      ? 'https://image.tmdb.org/t/p/w500$posterPath'
+                      : 'https://via.placeholder.com/500'; // A placeholder image URL
+
+                  return ListTile(
+                    leading: Image.network(imageUrl, width: 50),
+                    title: Text(movie['title'],
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.tertiary)),
+                    subtitle: Text('Release Date: ${movie['release_date']}',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.tertiary)),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MovieDetailPage(
+                            movieId: movie['id'],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
             }
           },
         ),
