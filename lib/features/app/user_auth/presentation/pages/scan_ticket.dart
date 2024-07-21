@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/chat_overview.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/no_animation_page_route.dart';
@@ -326,6 +327,7 @@ class _ScanPageState extends State<ScanPage> {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Scan Movie Ticket'),
@@ -416,27 +418,28 @@ class _ScanPageState extends State<ScanPage> {
               case 0:
                 Navigator.pushReplacement(
                   context,
-                  NoAnimationPageRoute(page: const FrontPage()),
+                  NoAnimationPageRoute(page: FrontPage()),
                 );
-                break;
               case 1:
                 Navigator.pushReplacement(
                   context,
-                  NoAnimationPageRoute(page: const ScanPage()),
+                  NoAnimationPageRoute(page: ScanPage()),
                 );
-                break;
               case 2:
                 Navigator.pushReplacement(
                   context,
-                  NoAnimationPageRoute(page: const ForumPage()),
+                  NoAnimationPageRoute(page: ForumPage()),
                 );
-                break;
               case 3:
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ChatOverview()),
+                );
+              case 4:
                 Navigator.pushReplacement(
                   context,
                   NoAnimationPageRoute(page: ProfileMenu()),
                 );
-                break;
             }
           }
         },

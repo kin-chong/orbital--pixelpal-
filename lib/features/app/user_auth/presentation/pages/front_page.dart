@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/chat_overview.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/forum_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/movie_detail_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/bottom_nav_bar.dart';
@@ -141,32 +142,34 @@ class _FrontPageState extends State<FrontPage>
         bottomNavigationBar: BottomNavBar(
           currentIndex: 0,
           onTap: (index) {
-            // Navigate to the appropriate page
-            switch (index) {
-              case 0:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: FrontPage()),
-                );
-                break;
-              case 1:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: ScanPage()),
-                );
-                break;
-              case 2:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: ForumPage()),
-                );
-                break;
-              case 3:
-                Navigator.pushReplacement(
-                  context,
-                  NoAnimationPageRoute(page: ProfileMenu()),
-                );
-                break;
+            if (index != 0) {
+              switch (index) {
+                case 0:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: FrontPage()),
+                  );
+                case 1:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ScanPage()),
+                  );
+                case 2:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ForumPage()),
+                  );
+                case 3:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ChatOverview()),
+                  );
+                case 4:
+                  Navigator.pushReplacement(
+                    context,
+                    NoAnimationPageRoute(page: ProfileMenu()),
+                  );
+              }
             }
           },
         ),
@@ -206,8 +209,12 @@ class _FrontPageState extends State<FrontPage>
 
                   return ListTile(
                     leading: Image.network(imageUrl, width: 50),
-                    title: Text(movie['title'], style: TextStyle(color: Theme.of(context).colorScheme.tertiary)),
-                    subtitle: Text('Release Date: ${movie['release_date']}', style: TextStyle(color: Theme.of(context).colorScheme.tertiary)),
+                    title: Text(movie['title'],
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.tertiary)),
+                    subtitle: Text('Release Date: ${movie['release_date']}',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.tertiary)),
                     onTap: () {
                       Navigator.push(
                         context,

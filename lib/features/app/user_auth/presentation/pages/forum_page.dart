@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixelpal/features/app/user_auth/presentation/pages/chat_overview.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/front_page.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/profile_menu.dart';
 import 'package:pixelpal/features/app/user_auth/presentation/pages/scan_ticket.dart';
@@ -41,7 +42,6 @@ class ForumPage extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(
           'Forum',
           style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
@@ -113,7 +113,6 @@ class ForumPage extends StatelessWidget {
         currentIndex: 2,
         onTap: (index) {
           if (index != 2) {
-            // Avoid navigating to the current page
             switch (index) {
               case 0:
                 Navigator.pushReplacement(
@@ -131,6 +130,11 @@ class ForumPage extends StatelessWidget {
                   NoAnimationPageRoute(page: ForumPage()),
                 );
               case 3:
+                Navigator.pushReplacement(
+                  context,
+                  NoAnimationPageRoute(page: ChatOverview()),
+                );
+              case 4:
                 Navigator.pushReplacement(
                   context,
                   NoAnimationPageRoute(page: ProfileMenu()),
@@ -476,7 +480,9 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     UserProfilePage(
-                                                        userId: commentUserId),
+                                                  userId: commentUserId,
+                                                  currentUserId: user!.uid,
+                                                ),
                                               ),
                                             );
                                           },

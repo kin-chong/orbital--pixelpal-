@@ -71,9 +71,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
           tooltip: 'Scan Ticket',
         ),
         const BottomNavigationBarItem(
-          icon: Icon(FontAwesomeIcons.comments),
+          icon: Icon(FontAwesomeIcons.newspaper),
           label: 'Forum',
           tooltip: 'Forum',
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(FontAwesomeIcons.comment),
+          label: 'Chats',
+          tooltip: 'Chats',
         ),
         BottomNavigationBarItem(
           icon: _image != null
