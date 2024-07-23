@@ -77,4 +77,40 @@ class MovieService {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>> fetchActorDetails(int actorId) async {
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/person/$actorId?api_key=$_apiKey&language=en-US'));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load actor details');
+    }
+  }
+
+  Future<List<dynamic>> fetchActorMovies(int actorId) async {
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/person/$actorId/movie_credits?api_key=$_apiKey&language=en-US'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['cast'] ?? [];
+    } else {
+      throw Exception('Failed to load actor movies');
+    }
+  }
+
+  Future<List<dynamic>> fetchRecommendedMovies(List<int> movieIds) async {
+    Set<dynamic> recommendations = {};
+    for (int id in movieIds) {
+      final response = await http.get(Uri.parse(
+          'https://api.themoviedb.org/3/movie/$id/recommendations?api_key=$_apiKey&language=en-US&page=1'));
+
+      if (response.statusCode == 200) {
+        recommendations.addAll(json.decode(response.body)['results']);
+      }
+    }
+    return recommendations.toList();
+  }
 }

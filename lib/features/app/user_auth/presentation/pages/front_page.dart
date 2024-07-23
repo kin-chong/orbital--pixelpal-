@@ -24,7 +24,7 @@ class _FrontPageState extends State<FrontPage>
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final BehaviorSubject<List<dynamic>> _searchResultsSubject = BehaviorSubject<List<dynamic>>();
-  Future<List<dynamic>>? _upcomingMovies;
+  Future<List<dynamic>>? _recommendedMovies;
   Future<List<dynamic>>? _currentlyShowingMovies;
   Future<List<dynamic>>? _searchResults;
   final TextEditingController _searchController = TextEditingController();
@@ -33,7 +33,7 @@ class _FrontPageState extends State<FrontPage>
   @override
   void initState() {
     super.initState();
-    _upcomingMovies = _movieService.fetchUpcomingMovies();
+    _recommendedMovies = _fetchRecommendedMovies();
     _currentlyShowingMovies = _movieService.fetchCurrentlyShowingMovies();
     _searchController.addListener(_onSearchChanged);
   }
@@ -50,10 +50,26 @@ class _FrontPageState extends State<FrontPage>
     _performSearch(_searchController.text);
   }
 
-  Future<void> _refreshUpcomingMovies() async {
+  Future<void> _refreshRecommendedMovies() async {
     setState(() {
-      _upcomingMovies = _movieService.fetchUpcomingMovies();
+      _recommendedMovies = _fetchRecommendedMovies();
     });
+  }
+
+  Future<List<dynamic>> _fetchRecommendedMovies() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('Users').doc(currentUser.uid).get();
+      if (userDoc.exists) {
+        List<dynamic> interactedMovies = userDoc.get('interacted_movies') ?? [];
+        List<int> movieIds = List<int>.from(interactedMovies);
+        List<dynamic> recommendations = await _movieService.fetchRecommendedMovies(movieIds);
+        // Ensure uniqueness
+        return recommendations.toSet().toList();
+      }
+    }
+    return [];
   }
 
   void _performSearch(String query) async {
@@ -119,7 +135,7 @@ class _FrontPageState extends State<FrontPage>
                     child: const TabBar(
                       indicatorColor: Colors.pinkAccent,
                       tabs: [
-                        Tab(text: 'Upcoming'),
+                        Tab(text: 'For You'),
                         Tab(text: 'Popular'),
                         Tab(text: 'Favorites'),
                       ],
@@ -131,7 +147,7 @@ class _FrontPageState extends State<FrontPage>
           children: [
             TabBarView(
               children: [
-                _buildUpcomingMoviesList(),
+                _buildRecommendedMoviesList(),
                 _buildPopularMoviesList(),
                 FavoritesTab(),
               ],
@@ -235,11 +251,11 @@ class _FrontPageState extends State<FrontPage>
     );
   }
 
-  Widget _buildUpcomingMoviesList() {
+  Widget _buildRecommendedMoviesList() {
     return RefreshIndicator(
-      onRefresh: _refreshUpcomingMovies,
+      onRefresh: _refreshRecommendedMovies,
       child: FutureBuilder<List<dynamic>>(
-        future: _upcomingMovies,
+        future: _recommendedMovies,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -248,14 +264,16 @@ class _FrontPageState extends State<FrontPage>
                 child: Text('Error: ${snapshot.error}',
                     style: const TextStyle(color: Colors.white)));
           } else {
+            final movies = snapshot.data ?? [];
+            final uniqueMovies = movies.toSet().toList();  // Ensure uniqueness
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 1,
               ),
-              itemCount: snapshot.data?.length ?? 0,
+              itemCount: uniqueMovies.length,
               itemBuilder: (context, index) {
-                var movie = snapshot.data![index];
+                var movie = uniqueMovies[index];
                 String? posterPath = movie['poster_path'];
                 String imageUrl = posterPath != null
                     ? 'https://image.tmdb.org/t/p/w500$posterPath'
@@ -348,14 +366,16 @@ class _FrontPageState extends State<FrontPage>
               child: Text('Error: ${snapshot.error}',
                   style: const TextStyle(color: Colors.white)));
         } else {
+          final movies = snapshot.data ?? [];
+          final uniqueMovies = movies.toSet().toList();  // Ensure uniqueness
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 1,
             ),
-            itemCount: snapshot.data?.length ?? 0,
+            itemCount: uniqueMovies.length,
             itemBuilder: (context, index) {
-              var movie = snapshot.data![index];
+              var movie = uniqueMovies[index];
               String? posterPath = movie['poster_path'];
               String imageUrl = posterPath != null
                   ? 'https://image.tmdb.org/t/p/w500$posterPath'
@@ -505,14 +525,16 @@ class _FavoritesTabState extends State<FavoritesTab> {
                     child: Text('Error: ${movieSnapshot.error}',
                         style: const TextStyle(color: Colors.white)));
               } else {
+                final movies = movieSnapshot.data ?? [];
+                final uniqueMovies = movies.toSet().toList();  // Ensure uniqueness
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 1,
                   ),
-                  itemCount: movieSnapshot.data?.length ?? 0,
+                  itemCount: uniqueMovies.length,
                   itemBuilder: (context, index) {
-                    var movie = movieSnapshot.data![index];
+                    var movie = uniqueMovies[index];
                     String? posterPath = movie['poster_path'];
                     String imageUrl = posterPath != null
                         ? 'https://image.tmdb.org/t/p/w500$posterPath'
