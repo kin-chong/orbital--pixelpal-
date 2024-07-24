@@ -418,18 +418,21 @@ class _ScanPageState extends State<ScanPage> {
               case 0:
                 Navigator.pushReplacement(
                   context,
-                  NoAnimationPageRoute(page: FrontPage()),
+                  NoAnimationPageRoute(page: const FrontPage()),
                 );
+                break;
               case 1:
                 Navigator.pushReplacement(
                   context,
-                  NoAnimationPageRoute(page: ScanPage()),
+                  NoAnimationPageRoute(page: const ScanPage()),
                 );
+                break;
               case 2:
                 Navigator.pushReplacement(
                   context,
-                  NoAnimationPageRoute(page: ForumPage()),
+                  NoAnimationPageRoute(page: const ForumPage()),
                 );
+                break;
               case 3:
                 Navigator.pushReplacement(
                   context,
@@ -440,6 +443,7 @@ class _ScanPageState extends State<ScanPage> {
                   context,
                   NoAnimationPageRoute(page: ProfileMenu()),
                 );
+                break;
             }
           }
         },
