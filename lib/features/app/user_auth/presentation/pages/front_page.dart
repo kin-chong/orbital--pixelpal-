@@ -227,10 +227,10 @@ class _FrontPageState extends State<FrontPage>
                     leading: Image.network(imageUrl, width: 50),
                     title: Text(movie['title'],
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.tertiary)),
+                            color: Colors.white)),
                     subtitle: Text('Release Date: ${movie['release_date']}',
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.tertiary)),
+                            color: Colors.white)),
                     onTap: () {
                       Navigator.push(
                         context,
