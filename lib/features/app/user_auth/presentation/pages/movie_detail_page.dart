@@ -1,19 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../../services/movie_service.dart';
+import 'actor_detail_page.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final int movieId;
-  // final bool isFavorite;
-  // final ValueChanged<bool> onFavoriteChanged;
 
   const MovieDetailPage({
     super.key,
     required this.movieId,
-    // required this.isFavorite,
-    // required this.onFavoriteChanged,
   });
 
   @override
@@ -33,12 +30,22 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     super.initState();
     _movieDetails = _movieService.fetchMovieDetails(widget.movieId);
     _checkIfFavorite();
+    _logMovieInteraction();
   }
 
   @override
   void dispose() {
     _youtubePlayerController?.dispose();
     super.dispose();
+  }
+
+  Future<void> _logMovieInteraction() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      await _firestore.collection('Users').doc(currentUser.uid).update({
+        'interacted_movies': FieldValue.arrayUnion([widget.movieId])
+      });
+    }
   }
 
   Future<void> _checkIfFavorite() async {
@@ -86,6 +93,22 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     }
   }
 
+  void _initializeTrailer(List<dynamic> trailers) {
+    if (trailers.isNotEmpty) {
+      final trailerKey = trailers[0]['key'];
+      print('Using trailer key: $trailerKey');
+      _youtubePlayerController = YoutubePlayerController(
+        initialVideoId: trailerKey,
+        flags: const YoutubePlayerFlags(
+          autoPlay: false,
+          mute: false,
+        ),
+      );
+    } else {
+      print('No trailers available');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,16 +153,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
               'Disney+'
             ]; // Example platforms
 
-            if (trailers.isNotEmpty) {
-              final trailerKey = trailers[0]['key'];
-              _youtubePlayerController = YoutubePlayerController(
-                initialVideoId: trailerKey,
-                flags: const YoutubePlayerFlags(
-                  autoPlay: false,
-                  mute: false,
-                ),
-              );
-            }
+            print('Trailers: $trailers');
+            _initializeTrailer(trailers);
 
             return SingleChildScrollView(
               child: Padding(
@@ -200,24 +215,37 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                           final actor = actors[index];
                           return Padding(
                             padding: const EdgeInsets.all(4.0),
-                            child: Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: NetworkImage(
-                                      'https://image.tmdb.org/t/p/w500${actor['profile_path']}'),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  actor['name'],
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.tertiary,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ActorDetailPage(
+                                      actorId: actor['id'],
+                                    ),
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage: NetworkImage(
+                                        'https://image.tmdb.org/t/p/w500${actor['profile_path']}'),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    actor['name'],
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
