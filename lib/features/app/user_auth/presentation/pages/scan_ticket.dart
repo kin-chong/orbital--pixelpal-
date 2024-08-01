@@ -16,8 +16,7 @@ import 'bottom_nav_bar.dart';
 import 'package:logging/logging.dart';
 import 'package:pixelpal/services/movie_service.dart';
 
-const String _apiKey =
-    'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U'; // Replace with your actual API key
+const String _apiKey = 'AIzaSyD7G9jtJ5e6BZOYIiyoCaQNWhhVAlV8d-U'; // Replace with your actual API key
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -368,19 +367,28 @@ class _ScanPageState extends State<ScanPage> {
                 return GestureDetector(
                   onTap: () =>
                       _navigateToTicketDetail(context, data, ticket.id),
-                  child: GridTile(
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    elevation: 4.0,
                     child: Column(
                       children: [
                         Expanded(
                           child: data['image_url'] != null
-                              ? Image.network(
-                                  data['image_url'],
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Container(
-                                    color: Colors.grey,
-                                    child:
-                                        Center(child: Icon(Icons.broken_image)),
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(10.0),
+                                  ),
+                                  child: Image.network(
+                                    data['image_url'],
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) =>
+                                        Container(
+                                      color: Colors.grey,
+                                      child:
+                                          Center(child: Icon(Icons.broken_image)),
+                                    ),
                                   ),
                                 )
                               : Container(color: Colors.grey),

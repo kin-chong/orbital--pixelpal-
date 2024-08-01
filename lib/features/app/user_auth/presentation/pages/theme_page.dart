@@ -32,21 +32,6 @@ class _ThemePageState extends State<ThemePage> {
               Provider.of<ThemeProvider>(context, listen: false).setDarkMode();
             },
           ),
-          /* ListTile(
-            title: const Text('Light Blue'),
-            leading: const Icon(Icons.wb_sunny),
-            onTap: () {
-              Provider.of<ThemeProvider>(context, listen: false).setlightBlue();
-            },
-          ), */
-          /* ListTile(
-            title: const Text('Light Green'),
-            leading: const Icon(Icons.wb_sunny),
-            onTap: () {
-              Provider.of<ThemeProvider>(context, listen: false)
-                  .setlightGreen();
-            },
-          ), */
         ],
       ),
     );
